@@ -14,21 +14,22 @@ namespace Air_bnb.Controllers
         public IActionResult Get()
         {
             List<Vacation> vacations = Vacation.Read();
-            return vacations.Count ==0 ?NotFound("There are no vacations"): Ok(vacations);
+            return vacations.Count == 0 ? NotFound("There are no vacations") : Ok(vacations);
+        }
+
+        // GET api/<VacationsController>/5
+        [HttpGet("{id}")]
+        public IActionResult Get(string id)
+        {
+            Vacation? find = Vacation.Read(id);
+            return find != null ? Ok(find) : NotFound("There is no vaction witth this ID");
         }
 
         [HttpGet("getByDates/{startDate}/{endDate}")]
         public IActionResult GetByDates(DateTime startDate, DateTime endDate)
         {
-            List<Vacation> vacations = Vacation.GetByDates(startDate,endDate);
+            List<Vacation> vacations = Vacation.GetByDates(startDate, endDate);
             return vacations.Count == 0 ? NotFound("There are no vacations between dates") : Ok(vacations);
-        }
-
-        // GET api/<VacationsController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
         }
 
         // POST api/<VacationsController>

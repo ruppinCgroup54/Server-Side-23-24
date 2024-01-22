@@ -85,3 +85,4 @@ C:\Users\bensh\OneDrive\Desktop\College\4th year\Semester A\אינטרנטיות
 C:\Users\bensh\OneDrive\Desktop\College\4th year\Semester A\אינטרנטיות 2\Home Tars\Server-Side-23-24\Air-bnb\obj\Debug\net6.0\Air-bnb.pdb
 C:\Users\bensh\OneDrive\Desktop\College\4th year\Semester A\אינטרנטיות 2\Home Tars\Server-Side-23-24\Air-bnb\obj\Debug\net6.0\Air-bnb.genruntimeconfig.cache
 C:\Users\bensh\OneDrive\Desktop\College\4th year\Semester A\אינטרנטיות 2\Home Tars\Server-Side-23-24\Air-bnb\obj\Debug\net6.0\ref\Air-bnb.dll
+C:\Users\bensh\OneDrive\Desktop\College\4th year\Semester A\אינטרנטיות 2\Home Tars\Server-Side-23-24\Air-bnb\bin\Debug\net6.0\.filenesting.json

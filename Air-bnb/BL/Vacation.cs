@@ -5,7 +5,7 @@
         string id, userId, flatId;
         DateTime startDate, endDate;
 
-        static List<Vacation> vacationsList = new List<Vacation>();
+        static List<Vacation> vacationsList = new();
 
         public Vacation(string id, string userId, string flatId, DateTime startDate, DateTime endDate)
         {
@@ -25,31 +25,41 @@
         public string FlatId { get => flatId; set => flatId = value; }
         public DateTime StartDate { get => startDate; set => startDate = value; }
         public DateTime EndDate { get => endDate; set => endDate = value; }
-    
-        public bool CheckDates(DateTime dStart1, DateTime dEnd1, DateTime dStart2, DateTime dEnd2)
+
+        public bool SameDatesAndFlat(Vacation vac1, Vacation vac2)
         {
-            return dEnd1 < dStart2 || dEnd2 < dStart1;
+            return !(vac1.EndDate <= vac2.StartDate || vac2.EndDate <= vac1.StartDate) && vac1.FlatId == vac2.FlatId;
         }
 
         public bool Insert()
         {
-            
-            if (vacationsList.TrueForAll(vac => vac.Id != this.Id && !(!CheckDates(vac.StartDate, vac.EndDate, this.startDate, this.endDate) && vac.FlatId==this.FlatId)))
+
+            if (vacationsList.TrueForAll(vac => vac.Id != this.Id && !SameDatesAndFlat(vac,this)))
             {
                 vacationsList.Add(this);
                 return true;
             }
             return false;
-        }    
+        }
 
         static public List<Vacation> Read()
         {
             return vacationsList;
         }
+        
+        static public Vacation? Read(string id)
+        {
+            return vacationsList.Find(v => v.Id == id);
+        }
+
+        static bool BetweenDates(DateTime start, DateTime end, DateTime check)
+        {
+            return start <= check && check <= end;
+        }
 
         static public List<Vacation> GetByDates(DateTime startDate, DateTime endDate)
         {
-            return vacationsList.FindAll(vac => vac.endDate <= endDate && startDate <= vac.startDate);
+            return vacationsList.FindAll(vac => BetweenDates(startDate, endDate,vac.startDate)|| BetweenDates(startDate, endDate, vac.EndDate));
         }
     }
 
