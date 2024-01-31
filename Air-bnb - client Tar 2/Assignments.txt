@@ -1,0 +1,6 @@
+Roni : Vacation page includes the CSS and JS
+Dolev : Flat's page upper part - new Flat form 
+Ben : Flat's page lower part - all flats div
+
+For design we will use bootstrap and try to use only jquery syntax
+for each HTML page we will create a JS and CSS files 
