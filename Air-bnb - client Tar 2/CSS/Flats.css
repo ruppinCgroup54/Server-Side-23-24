@@ -1,0 +1,75 @@
+:root {
+  --main-color: #deb887;
+  --main-black: #252525;
+  --secondery-color: #e4af6a;
+  --white-color: #fffffff1;
+}
+
+body {
+  font-family: "Inconsolata", monospace;
+  font-optical-sizing: auto;
+  font-weight: 900;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+  background-color: #c9c9c9;
+}
+
+#lower-section {
+  margin: 30vh 0;
+}
+
+.btn-primary,
+.btn-primary:focus,
+.btn-primary:not(:disabled):not(.disabled):active {
+  background-color: var(--main-color);
+  color: var(--white-color);
+  border-color: var(--secondery-color);
+  font-weight: bolder;
+}
+
+.btn-primary:hover {
+  background-color: var(--white-color);
+  border-color: var(--main-color);
+  color: var(--main-black);
+}
+.btn-primary:focus,
+.btn-primary:not(:disabled):not(.disabled):active:focus {
+  box-shadow: 0 0 0 0.2rem var(--main-color);
+}
+
+.card {
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px,
+    rgba(0, 0, 0, 0.22) 0px 10px 10px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .card {
+    opacity: 0;
+    animation: fade-in linear forwards;
+    animation-timeline: view();
+    animation-range: 10vh 40vh;
+    transition: all 0.5s ease-in-out;
+  }
+  .card:hover {
+    transform: scale(1.05);
+    z-index: 10;
+  }
+  .card-4 {
+    translate: -50%;
+  }
+  .card-3 {
+    translate: -100%;
+  }
+  .card-2 {
+    translate: -150%;
+  }
+  .card-1 {
+    translate: -200%;
+  }
+  @keyframes fade-in {
+    to {
+      opacity: 1;
+      translate: 0;
+    }
+  }
+}

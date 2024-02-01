@@ -5,7 +5,17 @@
         string id,city,address;
         double price;
         int numberOfRooms;
-        static List<Flat> FlatList = new List<Flat>();
+        static List<Flat> FlatList = new List<Flat>()
+        {
+            new Flat("1","tel aviv","yarkon 8",2000,8),
+            new Flat("2","tel aviv","yarkon 9",1000,8),
+            new Flat("3","tel aviv","yarkon 10",200,4),
+            new Flat("4","tel aviv","yarkon 11",100,3),
+            new Flat("5","tel aviv","yarkon 8",2000,8),
+            new Flat("6","tel aviv","yarkon 9",1000,8),
+            new Flat("7","tel aviv","yarkon 10",200,4),
+            new Flat("8","tel aviv","yarkon 11",100,3)
+        };
 
         public Flat(string id, string city, string address, double price, int numberOfRooms)
         {

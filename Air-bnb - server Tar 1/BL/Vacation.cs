@@ -5,7 +5,13 @@
         string id, userId, flatId;
         DateTime startDate, endDate;
 
-        static List<Vacation> vacationsList = new();
+        static List<Vacation> vacationsList = new()
+        {
+        new Vacation("a","a","1",new DateTime(2023,01,10),new DateTime(2023,01,15)),
+        new Vacation("b","b","1",new DateTime(2023,01,05),new DateTime(2023,01,08)),
+        new Vacation("c","c","2",new DateTime(2023,01,10),new DateTime(2023,01,15)),
+        new Vacation("d","d","3",new DateTime(2023,01,13),new DateTime(2023,01,18)),
+        };
 
         public Vacation(string id, string userId, string flatId, DateTime startDate, DateTime endDate)
         {
@@ -34,7 +40,7 @@
         public bool Insert()
         {
 
-            if (vacationsList.TrueForAll(vac => vac.Id != this.Id && !SameDatesAndFlat(vac,this)))
+            if (vacationsList.TrueForAll(vac => vac.Id != this.Id && !SameDatesAndFlat(vac, this)))
             {
                 vacationsList.Add(this);
                 return true;
@@ -46,7 +52,7 @@
         {
             return vacationsList;
         }
-        
+
         static public Vacation? Read(string id)
         {
             return vacationsList.Find(v => v.Id == id);
@@ -60,7 +66,7 @@
 
         static public List<Vacation> GetByDates(DateTime startDate, DateTime endDate)
         {
-            return vacationsList.FindAll(vac => BetweenDates(startDate, endDate,vac.startDate)|| BetweenDates(startDate, endDate, vac.EndDate));
+            return vacationsList.FindAll(vac => BetweenDates(startDate, endDate, vac.startDate) || BetweenDates(startDate, endDate, vac.EndDate));
         }
     }
 
