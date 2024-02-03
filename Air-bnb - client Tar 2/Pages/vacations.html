@@ -2,22 +2,186 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Vacations page</title>
+    <link rel="icon" type="image/x-icon" href="../SRC/vacation.png">
 
-  <script>
-    const searchParams = new URLSearchParams(window.location.search);
-    console.log(searchParams.has('faltId')); // true
-    console.log(searchParams.get('flatId')); // price_descending
+    <!-- import jquery library -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+    <!-- import js page -->
+    <script src="../JS/ajaxCalls.js"></script>
+    <script src="../JS/Vacation.js"></script>
+
+    <!-- import css -->
+    <link rel="stylesheet" href="../CSS/Vacation.css">
+
+    <!-- import bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+        crossorigin="anonymous"></script>
+
+    <!-- import swel -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+            // define server api
+            // server = `https://proj.ruppin.ac.il/cgroup54/test2/tar1/`;
+            server = `https://localhost:7014/`;
+
+            // get the flat id from the URL
+            getFromURL();
+
+            // bind the submit event to a function called f1
+            $("#vForm").submit(f1);
+
+            // shoow vacations by id
+            $("#showBtn").on("click", showVacationById);
+
+        });
+
+        function getFromURL() {
+            let params = new URLSearchParams(location.search);
+            $("#flatId").val(params.get('flatId'));
+        }
+
+        function f1() {
+            addVacation();
+            return false;
+        }
+
+        function addVacation() {
+            start = $("#sDate").val();
+            end = $("#eDate").val();
+            if (start > end) {
+                alert("Invalide dates, try again!");
+                // swal.fire("Invalide dates, try again!");
+                return false;
+            }
+            if ((new Date(end) - new Date(start)) / (1000 * 60 * 60 * 24) > 20) {
+                alert("Vacation must be less than 20 days!");
+            }
+            Vacation = {
+                id: Math.random().toString(36).slice(2) + new Date().getTime(),
+                userId: $("#userId").val(),
+                flatId: $("#flatId").val(),
+                startDate: start,
+                endDate: end,
+            }
+            ajaxCall("POST", server + 'api/Vacations', JSON.stringify(Vacation), successVacationCB, errorVacationCB);
+        }
+
+        function successVacationCB(data) {
+            console.log(data);
+            swal.fire("Vacation is add!");
+        }
+
+        function errorVacationCB(err) {
+            console.log(err);
+            alert("error");
+        }
+
+        function showVacationById() {
+            var userId = $("#userId").val();
+            ajaxCall("GET", server + `api/Vacations/${userId}`, "", getSCB, getECB)
+        }
+
+        function getSCB(vacationList) {
+            console.log(vacationList);
+            let str = ``;
+
+            vacationList.forEach(vacation => {
+
+                let startD = new Date(vacation.startDate).toLocaleDateString('en-UK');
+                let endD = new Date(vacation.endDate).toLocaleDateString('en-UK');
 
 
+                str += `
+                <div class="col mb-4">
+                  <div class="card">
+                    <img src="../SRC/vacation.webp" class="card-img-top">
+                    <div class="card-body">
+                      <h5 class="card-title">Vacation</h5>
+                      <p class="card-text">Order number: ${vacation.id}</p>
+                      <p class="card-text">Flat id: ${vacation.flatId}</p>
+                      <p class="card-text">${startD} - ${endD} </p>
+                    </div>
+                  </div>
+                </div>
+            `;
+            });
+            $("#vacationDiv").html(str);
+        }
 
-  </script>
+        function getECB(err) {
+            alert("Error!")
+        }
+    </script>
 </head>
 
 <body>
+    <div class="container contact">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="contact-info">
+                    <img src="https://image.ibb.co/kUASdV/contact-image.png" alt="image" />
+                    <h2>Order your vacation!</h2>
+                    <h4>We would love to hear from you.</h4>
+                </div>
+            </div>
+            <form id="vForm" class="col-md-9">
+                <div class="contact-form">
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="flatId">Flat Id:</label>
+                        <div class="col-sm-10">
+                            <input id="flatId" type="text" class="form-control" placeholder="Enter First Name"
+                                name="fname">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="userId">User Id:</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="userId" placeholder="Enter user id" name="lname"
+                                required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="sDate">Start Date:</label>
+                        <div class="col-sm-10">
+                            <input type="date" class="form-control" id="sDate" placeholder="Enter email" name="email"
+                                required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="eDate">End Date:</label>
+                        <div class="col-sm-10">
+                            <input type="date" class="form-control" id="eDate" placeholder="Enter email" name="email"
+                                required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-default">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="col">
+                <button id="showBtn" type="button" class="btn btn-default">Get All My Vacations</button>
+            </div>
+
+            <div id="vacationDiv" class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
+
+            </div>
+
+        </div>
 
 </body>
+
 
 </html>

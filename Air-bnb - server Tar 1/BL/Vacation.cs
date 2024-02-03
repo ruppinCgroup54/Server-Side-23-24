@@ -24,6 +24,7 @@
 
         public Vacation()
         {
+
         }
 
         public string Id { get => id; set => id = value; }
@@ -39,7 +40,6 @@
 
         public bool Insert()
         {
-
             if (vacationsList.TrueForAll(vac => vac.Id != this.Id && !SameDatesAndFlat(vac, this)))
             {
                 vacationsList.Add(this);
@@ -53,9 +53,9 @@
             return vacationsList;
         }
 
-        static public Vacation? Read(string id)
+        static public List<Vacation> ReadByUserId(string id)
         {
-            return vacationsList.Find(v => v.Id == id);
+            return vacationsList.FindAll(v => v.UserId == id);
         }
 
 
