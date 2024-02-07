@@ -38,7 +38,7 @@ namespace Air_bnb.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] Flat flat)
         {
-            return flat.Insert() ? Ok(flat.Id) : Conflict("Unable to add the flat");
+            return flat.Insert() ? Ok(new {id=flat.Id }) : Conflict("Unable to add the flat");
         }
 
         // PUT api/<FlatsController>/5
