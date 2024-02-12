@@ -51,17 +51,14 @@
         static public List<Vacation> Read()
         {
             return vacationsList;
+        } 
+        public static Vacation? Read(string id)
+        {
+            return vacationsList.Find(vac => vac.Id == id);
         }
 
         static public List<Vacation> ReadByUserId(string id)
         {
-<<<<<<< Updated upstream
-=======
-            return vacationsList.Find(v => v.Id == id);
-        }  
-        static public List<Vacation> ReadByUserId(string id)
-        {
->>>>>>> Stashed changes
             return vacationsList.FindAll(v => v.UserId == id);
         }
 

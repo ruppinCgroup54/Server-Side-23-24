@@ -21,13 +21,8 @@ namespace Air_bnb.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(string id)
         {
-<<<<<<< Updated upstream
-            List<Vacation> findVacations = Vacation.ReadByUserId(id);
-            return findVacations != null ? Ok(findVacations) : NotFound("There is no vaction witth this ID");
-=======
             Vacation? find = Vacation.Read(id);
             return find != null ? Ok(find) : NotFound("There is no vaction with this ID");
->>>>>>> Stashed changes
         }
 
         [HttpGet("userId/{id}")]
@@ -49,11 +44,7 @@ namespace Air_bnb.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] Vacation vacation)
         {
-<<<<<<< Updated upstream
-            return vacation.Insert() ? Ok(vacation) : Conflict("Unable to add the vacation");
-=======
             return vacation.Insert() ? Ok(new { id=vacation.Id }) : Conflict("Unable to add the vacation");
->>>>>>> Stashed changes
         }
 
         // PUT api/<VacationsController>/5
