@@ -25,14 +25,6 @@ namespace Air_bnb.Controllers
             return find != null ? Ok(find) : NotFound("There is no vaction with this ID");
         }
 
-        [HttpGet("userId/{id}")]
-        public IActionResult GetByUserID(string id)
-        {
-            List<Vacation> find = Vacation.ReadByUserId(id);
-            return find.Count != 0 ? Ok(find) : NotFound("There is no vaction for this user");
-        }
-
-
         [HttpGet("getByDates/{startDate}/{endDate}")]
         public IActionResult GetByDates(DateTime startDate, DateTime endDate)
         {
@@ -44,7 +36,7 @@ namespace Air_bnb.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] Vacation vacation)
         {
-            return vacation.Insert() ? Ok(new { id=vacation.Id }) : Conflict("Unable to add the vacation");
+            return vacation.Insert() ? Ok(vacation) : Conflict("Unable to add the vacation");
         }
 
         // PUT api/<VacationsController>/5
