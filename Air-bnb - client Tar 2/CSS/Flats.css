@@ -53,26 +53,31 @@ body {
 @media (prefers-reduced-motion: no-preference) {
   .card {
     opacity: 0;
-    animation: fade-in linear forwards;
-    animation-timeline: view();
-    animation-range: entry 50px;
+    /* animation: 1s fade-in linear forwards; */
+    /* animation-timeline: view();
+    animation-range: entry 50px; */
     transition: all 0.5s ease-in-out;
+    translate: -150px;
   }
   .card:hover {
     transform: scale(1.05);
     z-index: 10;
   }
   .card-4 {
-    translate: -25%;
+    transition-delay: 400ms;
   }
   .card-3 {
-    translate: -75%;
+    transition-delay: 300ms;
   }
   .card-2 {
-    translate: -125%;
+    transition-delay: 200ms;
   }
   .card-1 {
-    translate: -175%;
+    transition-delay: 100ms;
+  }
+  .show {
+    opacity: 1;
+    translate: 0;
   }
   @keyframes fade-in {
     to {

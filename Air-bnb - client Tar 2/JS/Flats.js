@@ -7,6 +7,19 @@ $(document).ready(function () {
   getAllCities();
 });
 
+const observer = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("show");
+      } else {
+        entry.target.classList.remove("show");
+      }
+    });
+  },
+  { threshold: 0.2 }
+);
+
 function addNewFlat(e) {
   let data = e.target;
 
@@ -58,9 +71,13 @@ function renderFalts() {
 function successFlatCB(flats) {
   let strFlats = flats.map((flat, i) => createNewFlat(flat, i));
 
-  // console.log("flats", strFlats);
+  console.log("flats", strFlats);
 
   $("#flats-grid").html(strFlats);
+
+  document
+    .querySelectorAll("#flats-grid .card")
+    .forEach((el) => observer.observe(el));
 }
 function errorFlatCB(error) {
   console.log("error", error);
@@ -91,7 +108,9 @@ function createNewFlat(flat, i) {
                   <div class="card-text">
                     <p class="p-0 m-0">City: ${flat.city}</p>
                     <p class="p-0 m-0">address: ${flat.address}</p>
-                    <p class="p-0 m-0">Number of rooms: ${flat.numberOfRooms}</p>
+                    <p class="p-0 m-0">Number of rooms: ${
+                      flat.numberOfRooms
+                    }</p>
                     <p class="p-0 m-0"  >Price: ${flat.price} $</p>
                     </div>
                 </div>
