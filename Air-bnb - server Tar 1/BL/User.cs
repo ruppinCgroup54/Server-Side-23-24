@@ -24,10 +24,10 @@
             return dbs.Insert(this);
         }
 
-        public static bool Login(string email, string password)
+        public bool Login()
         {
             DBservices dbs = new DBservices();
-            return dbs.Login(email, password);
+            return dbs.Login(this);
         }
 
     }

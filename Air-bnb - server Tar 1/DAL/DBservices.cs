@@ -104,7 +104,7 @@ public class DBservices
     }
 
     //login user
-    public bool Login(string email, string password)
+    public bool Login(User loginUser)
     {
 
         SqlConnection con;
@@ -122,7 +122,7 @@ public class DBservices
 
         //String cStr = BuildInsertCommand(newUser);      // helper method to build the insert string
 
-        cmd = CreateUserLoginCommandWithSP("SP_LoginUser", con, email, password);             // create the command
+        cmd = CreateUserLoginCommandWithSP("SP_LoginUser", con, loginUser);             // create the command
 
         try
         {
@@ -147,7 +147,7 @@ public class DBservices
     }
 
     // Create the SqlCommand for insert user
-    private SqlCommand CreateUserLoginCommandWithSP(String spLoginUser, SqlConnection con, string email, string password)
+    private SqlCommand CreateUserLoginCommandWithSP(String spLoginUser, SqlConnection con, User loginUser)
     {
 
         SqlCommand cmd = new SqlCommand(); // create the command object
@@ -160,8 +160,8 @@ public class DBservices
 
         cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
 
-        cmd.Parameters.AddWithValue("@email", email);
-        cmd.Parameters.AddWithValue("@password", password);
+        cmd.Parameters.AddWithValue("@email", loginUser.Email);
+        cmd.Parameters.AddWithValue("@password", loginUser.Password);
 
         return cmd;
     }
