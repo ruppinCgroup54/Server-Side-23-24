@@ -32,6 +32,13 @@ namespace Air_bnb.Controllers
             return numEffected;
         }
 
+        // POST login
+        [HttpPost]
+        public bool Post([FromBody] string email, string password)
+        {
+            return Login(email, password);
+        }
+
         // PUT api/<UsersController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)

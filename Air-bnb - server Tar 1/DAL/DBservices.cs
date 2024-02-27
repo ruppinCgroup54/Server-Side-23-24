@@ -55,9 +55,9 @@ public class DBservices
             throw (ex);
         }
 
-        String cStr = BuildInsertCommand(newUser);      // helper method to build the insert string
+        //String cStr = BuildInsertCommand(newUser);      // helper method to build the insert string
 
-        cmd = CreateCommand(cStr, con);             // create the command
+        cmd = CreateUserInsertCommandWithSP("Sp_InsertUser", con, newUser);             // create the command
 
         try
         {
@@ -81,46 +81,89 @@ public class DBservices
 
     }
 
-    // Build the Insert command String
-    private String BuildInsertCommand(User newUser)
-    {
-        String command;
-
-        StringBuilder sb = new StringBuilder();
-        // use a string builder to create the dynamic string
-        sb.AppendFormat("Values('{0}', '{1}', '{2}', '{3}')", newUser.FirstName,newUser.FamilyName, newUser.Email, newUser.Password);
-        String prefix = "INSERT INTO UsersTable " + "(firstName, familyName, email, password) ";
-        command = prefix + sb.ToString();
-
-        return command;
-    }
-    //---------------------------------------------------------------------------------
-    // Create the SqlCommand
-    //---------------------------------------------------------------------------------
-    private SqlCommand CreateCommand(String CommandSTR, SqlConnection con)
+    // Create the SqlCommand for insert user
+    private SqlCommand CreateUserInsertCommandWithSP(String spInsertUser, SqlConnection con, User newUser )
     {
 
         SqlCommand cmd = new SqlCommand(); // create the command object
 
         cmd.Connection = con;              // assign the connection to the command object
 
-        cmd.CommandText = CommandSTR;      // can be Select, Insert, Update, Delete 
+        cmd.CommandText = spInsertUser;      // can be Select, Insert, Update, Delete 
 
         cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
 
-        cmd.CommandType = System.Data.CommandType.Text; // the type of the command, can also be stored procedure
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        cmd.Parameters.AddWithValue("@firstName", newUser.FirstName);
+        cmd.Parameters.AddWithValue("@familyName", newUser.FamilyName);
+        cmd.Parameters.AddWithValue("@email", newUser.Email);
+        cmd.Parameters.AddWithValue("@password", newUser.Password);
 
         return cmd;
     }
 
-    //--------------------------------------------------------------------
-    // TODO Build the FLight Delete command String method
-    // BuildFlightDeleteCommand(int id)
-    //--------------------------------------------------------------------
+    //login user
+    public bool Login(string email, string password)
+    {
 
-    //--------------------------------------------------------------------
-    // TODO Build the FLight Delete  method
-    // DeleteFlight(int id)
-    //--------------------------------------------------------------------
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        //String cStr = BuildInsertCommand(newUser);      // helper method to build the insert string
+
+        cmd = CreateUserLoginCommandWithSP("SP_LoginUser", con, email, password);             // create the command
+
+        try
+        {
+            object exist = cmd.ExecuteScalar(); // execute the command
+            return exist==null ? false : true;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+
+    }
+
+    // Create the SqlCommand for insert user
+    private SqlCommand CreateUserLoginCommandWithSP(String spLoginUser, SqlConnection con, string email, string password)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spLoginUser;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        cmd.Parameters.AddWithValue("@email", email);
+        cmd.Parameters.AddWithValue("@password", password);
+
+        return cmd;
+    }
 
 }
