@@ -33,10 +33,10 @@ namespace Air_bnb.Controllers
         }
 
         // POST login
-        [HttpPost]
-        public bool Post([FromBody] string email, string password)
+        [HttpPost("login")]
+        public bool Login([FromBody] User loginUser)
         {
-            return BL.User.Login(email, password);
+            return loginUser.Login();
         }
 
         // PUT api/<UsersController>/5
