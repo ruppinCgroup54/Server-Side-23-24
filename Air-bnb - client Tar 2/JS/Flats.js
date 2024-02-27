@@ -89,10 +89,10 @@ function createNewFlat(flat, i) {
                 </div>
                 <div class="card-body">
                   <div class="card-text">
-                    <p>City: ${flat.city}</p>
-                    <p>address: ${flat.address}</p>
-                    <p>Number of rooms: ${flat.numberOfRooms}</p>
-                    <p>Price: ${flat.price} $</p>
+                    <p class="p-0 m-0">City: ${flat.city}</p>
+                    <p class="p-0 m-0">address: ${flat.address}</p>
+                    <p class="p-0 m-0">Number of rooms: ${flat.numberOfRooms}</p>
+                    <p class="p-0 m-0"  >Price: ${flat.price} $</p>
                     </div>
                 </div>
                 <div class="card-footer">
