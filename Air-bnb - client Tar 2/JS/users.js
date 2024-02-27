@@ -45,7 +45,7 @@ function addNewUser(e) {
     };
     ajaxCall(
       "POST",
-      server + "api/Users",
+      server + "api/Users/",
       JSON.stringify(newUser),
       sInsertCB,
       eInsertCB
