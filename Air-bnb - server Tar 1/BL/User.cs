@@ -24,7 +24,7 @@
             return dbs.Insert(this);
         }
 
-        public bool Login(string email, string password)
+        public static bool Login(string email, string password)
         {
             DBservices dbs = new DBservices();
             return dbs.Login(email, password);
