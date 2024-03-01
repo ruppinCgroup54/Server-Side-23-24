@@ -21,9 +21,10 @@ namespace Air_bnb.Controllers
 
         // GET api/<FlatsController>/5
         [HttpGet("{id}")]
-        public Flat Get(string id)
+        public IActionResult Get(int id)
         {
-            return Flat.Read(id);
+            Flat f = Flat.Read(id);
+            return f.Id==0 ? NotFound("Sorry no such flat with this id") : Ok(f);
         }
 
         [HttpGet("q")]

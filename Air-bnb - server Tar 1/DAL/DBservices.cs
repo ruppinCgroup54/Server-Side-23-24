@@ -37,7 +37,8 @@ public class DBservices
         con.Open();
         return con;
     }
-
+    
+    //----------------------------------//
     //insert new user
     public int Insert(User newUser)
     {
@@ -113,6 +114,7 @@ public class DBservices
         return cmd;
     }
 
+    //----------------------------------//
     //login user
     public User Login(User loginUser)
     {
@@ -167,7 +169,7 @@ public class DBservices
 
     }
 
-    // Create the SqlCommand for insert user
+    // Create the SqlCommand for login user
     private SqlCommand CreateUserLoginCommandWithSP(String spLoginUser, SqlConnection con, User loginUser)
     {
 
@@ -187,6 +189,7 @@ public class DBservices
         return cmd;
     }
 
+    //----------------------------------//
     //insert new flat
     public bool Insert(Flat newFlat)
     {
@@ -230,7 +233,7 @@ public class DBservices
 
     }
 
-    // Create the SqlCommand for insert user
+    // Create the SqlCommand for new flat
     private SqlCommand CreateFlatInsertCommandWithSP(String spInsertFlat, SqlConnection con, Flat newFlat)
     {
 
@@ -251,4 +254,238 @@ public class DBservices
 
         return cmd;
     }
+
+    //----------------------------------//
+    //find all the flats in a city with max price
+    public List<Flat> GetMaxPriceInCity(string city, float price)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        //String cStr = BuildInsertCommand(newUser);      // helper method to build the insert string
+
+        cmd = CreateFlatsByCityAndMaxPriceCommandWithSP("SP_ReadFlatsCityMaxPrice", con, city, price);             // create the command
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader();
+
+            List<Flat> flatList = new();
+
+            while (dataReader.Read())
+            {
+                Flat f = new();
+                f.Id = Convert.ToInt32(dataReader["id"]);
+                f.City = dataReader["city"].ToString();
+                f.Address = dataReader["address"].ToString();
+                f.NumberOfRooms = Convert.ToInt32(dataReader["numOfRooms"]);
+                f.Price = Convert.ToDouble(dataReader["price"]);
+
+                flatList.Add(f);
+            }
+
+            return flatList;
+
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    // Create the SqlCommand for flats in a city with max price
+    private SqlCommand CreateFlatsByCityAndMaxPriceCommandWithSP(String spFlatsCityMaxPrice, SqlConnection con, string city, float price)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spFlatsCityMaxPrice;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        cmd.Parameters.AddWithValue("@city", city);
+        cmd.Parameters.AddWithValue("@price", price);
+
+        return cmd;
+    }
+
+    //----------------------------------//
+    //find flat by id
+    public Flat ReadFlatById(int id)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        //String cStr = BuildInsertCommand(newUser);      // helper method to build the insert string
+
+        cmd = CreateFlatByIdCommandWithSP("SP_ReadFlatsById", con, id);             // create the command
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader();
+
+            Flat f = new();
+
+            while (dataReader.Read())
+            {
+                f.Id = Convert.ToInt32(dataReader["id"]);
+                f.City = dataReader["city"].ToString();
+                f.Address = dataReader["address"].ToString();
+                f.NumberOfRooms = Convert.ToInt32(dataReader["numOfRooms"]);
+                f.Price = Convert.ToDouble(dataReader["price"]);
+            }
+
+            return f;
+
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    // Create the SqlCommand for flat by id
+    private SqlCommand CreateFlatByIdCommandWithSP(String spFlatById, SqlConnection con, int id)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spFlatById;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        cmd.Parameters.AddWithValue("@id", id);
+
+        return cmd;
+    }
+
+    //----------------------------------//
+    //get all flats
+    public List<Flat> ReadFlats()
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        //String cStr = BuildInsertCommand(newUser);      // helper method to build the insert string
+
+        cmd = CreateFlatsCommandWithSP("SP_ReadFlats", con);             // create the command
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader();
+
+            List<Flat> flatList = new();
+
+            while (dataReader.Read())
+            {
+                Flat f = new();
+                f.Id = Convert.ToInt32(dataReader["id"]);
+                f.City = dataReader["city"].ToString();
+                f.Address = dataReader["address"].ToString();
+                f.NumberOfRooms = Convert.ToInt32(dataReader["numOfRooms"]);
+                f.Price = Convert.ToDouble(dataReader["price"]);
+
+                flatList.Add(f);
+            }
+
+            return flatList;
+
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    // Create the SqlCommand for all flats
+    private SqlCommand CreateFlatsCommandWithSP(String spFlats, SqlConnection con)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spFlats;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        return cmd;
+    }
+
 }
