@@ -2,22 +2,11 @@
 {
     public class Flat
     {
-        string id,city,address;
+        string city,address;
         double price;
-        int numberOfRooms;
-        //static List<Flat> FlatList = new List<Flat>()
-        //{
-        //    new Flat("1","tel aviv","yarkon 8",2000,8),
-        //    new Flat("2","tel aviv","yarkon 9",1000,8),
-        //    new Flat("3","tel aviv","yarkon 10",200,4),
-        //    new Flat("4","tel aviv","yarkon 11",100,3),
-        //    new Flat("5","tel aviv","yarkon 8",2000,8),
-        //    new Flat("6","tel aviv","yarkon 9",1000,8),
-        //    new Flat("7","tel aviv","yarkon 10",200,4),
-        //    new Flat("8","tel aviv","yarkon 11",100,3)
-        //};
+        int id, numberOfRooms;
 
-        public Flat(string id, string city, string address, double price, int numberOfRooms)
+        public Flat(int id, string city, string address, double price, int numberOfRooms)
         {
             Id = id;
             City = city;
@@ -30,7 +19,7 @@
         {
         }
 
-        public string Id { get => id; set => id = value; }
+        public int Id { get => id; set => id = value; }
         public string City { get => city; set => city = value; }
         public string Address { get => address; set => address = value; }
         public int NumberOfRooms { get => numberOfRooms; set => numberOfRooms = value; }
@@ -39,35 +28,36 @@
 
         public bool Insert()
         {
-            //if (!FlatList.Exists(flat => flat.id == this.id))
-            //{
-            //    FlatList.Add(this);
-            //    return true;
-            //}
-            //return false;
-
             DBservices dbs = new DBservices();
             return dbs.Insert(this);
         }
 
         static public List<Flat> Read()
         {
-            return FlatList;
+            DBservices dbs = new DBservices();
+            return dbs.ReadFlats();
         }
         
-        static public Flat Read(string id)
+        static public Flat Read(int id)
         {
-            return FlatList.Find(item => item.Id == id)?? new Flat() ;
+            DBservices dbs = new DBservices();
+            return dbs.ReadFlatById(id);
         }
 
         double Discount(double val)
         {
-            return (this.NumberOfRooms > 1 && val > 100) ? val * 0.9 : val;
+            if (this.Id==0)
+            {
+                return (this.NumberOfRooms > 1 && val > 100) ? val * 0.9 : val;
+            }
+            return val;
         }
 
-        static public List<Flat> GetMaxPriceInCity(string city, int price)
+        static public List<Flat> GetMaxPriceInCity(string city, float price)
         {
-            return FlatList.FindAll(flat => flat.City == city && flat.price < price);
+            DBservices dbs = new DBservices();
+            List<Flat> flatList = dbs.GetMaxPriceInCity(city, price);
+            return flatList;
         }
     }
 }
