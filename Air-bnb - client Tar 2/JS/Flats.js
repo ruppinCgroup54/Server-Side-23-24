@@ -7,8 +7,6 @@ $(document).ready(function () {
   getAllCities();
 });
 
-
-
 function addNewFlat(e) {
   let data = e.target;
 
@@ -87,8 +85,8 @@ function createNewFlat(flat, i) {
     }
   }
 
-  return ` <div class="col mb-4">
-              <div class="card h-100 card-${(i % diviedBy) + 1}" >
+  return ` <div class="col mb-4"  >
+              <div  class="card h-100 card-${(i % diviedBy) + 1}" >
                 <img src="../SRC/air-bnb.png" class="card-img-top" alt="Random flat picture">
                 <div class="card-header">
                   <u>Flat details:</u>
