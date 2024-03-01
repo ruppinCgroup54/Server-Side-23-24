@@ -6,6 +6,7 @@ $(document).ready(function () {
   $("#loginForm").submit(loginUser);
 });
 
+//Register user / Update user
 function addNewUser(e) {
   let data = e.target;
 
@@ -26,6 +27,7 @@ function addNewUser(e) {
   return false;
 }
 
+
 function sInsertCB(res) {
   console.log("res", res);
   swal("User has been registered!", "Great Job", "success");
@@ -35,6 +37,7 @@ function eInsertCB(err) {
   alert(err.responseText);
 }
 
+//Login user
 function loginUser(e) {
   let data = e.target;
   e.preventDefault();
@@ -48,18 +51,24 @@ function loginUser(e) {
     "POST",
     server + "api/Users/login",
     JSON.stringify(loginUser),
-    sLInsertCB,
-    eLInsertCB
+    sLoginCB,
+    eLoginCB
   );
   e.target.reset();
   return false;
 }
 
-function sLInsertCB(res) {
+function sLoginCB(res) {
   console.log("res", res);
   //swal("User has been registered!", "Great Job", "success");
+  sessionStorage.setItem('connectUser', JSON.stringify(res));
 }
-function eLInsertCB(err) {
+function eLoginCB(err) {
   console.log("err");
   alert(err.responseText);
+}
+
+//Logout user
+function logoutUser(){
+sessionStorage.removeItem('connectUser');
 }
