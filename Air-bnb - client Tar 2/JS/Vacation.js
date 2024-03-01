@@ -103,6 +103,10 @@ async function sVacationsCB(data) {
   $("#lower-section").attr("hidden", false);
 
   $("#vacations-grid").html(strVacations);
+
+  document
+    .querySelectorAll("#vacations-grid .card")
+    .forEach((el) => observer.observe(el));
 }
 
 function eVacationsCB(error) {
@@ -142,7 +146,9 @@ function createVacation(vac, flat, i) {
               <div class="card-text">
                 <p>Flat: ${vac.flatId}</p>
                 <p>Price: ${price} $</p>
-                <p>Dates: ${startDate.toLocaleDateString("en-UK")} - ${endDate.toLocaleDateString("en-UK")}</p>
+                <p>Dates: ${startDate.toLocaleDateString(
+                  "en-UK"
+                )} - ${endDate.toLocaleDateString("en-UK")}</p>
                 </div>
             </div>
           </div>

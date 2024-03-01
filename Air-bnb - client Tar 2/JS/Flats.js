@@ -7,18 +7,7 @@ $(document).ready(function () {
   getAllCities();
 });
 
-const observer = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("show");
-      } else {
-        entry.target.classList.remove("show");
-      }
-    });
-  },
-  { threshold: 0.2 }
-);
+
 
 function addNewFlat(e) {
   let data = e.target;
