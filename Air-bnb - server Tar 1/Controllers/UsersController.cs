@@ -26,10 +26,9 @@ namespace Air_bnb.Controllers
 
         // POST api/<UsersController>
         [HttpPost]
-        public int Post([FromBody] User newUser)
+        public IActionResult Post([FromBody] User newUser)
         {
-            int numEffected = newUser.Insert();
-            return numEffected;
+            return newUser.Insert()==1 ? Ok(newUser) : Conflict(new { message = $"An existing record with the id" });
         }
 
         // POST login

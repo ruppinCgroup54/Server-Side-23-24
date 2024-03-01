@@ -64,11 +64,19 @@ public class DBservices
             int numEffected = cmd.ExecuteNonQuery(); // execute the command
             return numEffected;
         }
+        catch (SqlException e)
+        {
+            if (e.Message.Contains("Violation of PRIMARY KEY"))
+            {
+                return 0;
+            }
+        }
         catch (Exception ex)
         {
             // write to log
             throw (ex);
         }
+        
 
         finally
         {
@@ -177,4 +185,68 @@ public class DBservices
         return cmd;
     }
 
+    //insert new flat
+    public bool Insert(Flat newFlat)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        //String cStr = BuildInsertCommand(newUser);      // helper method to build the insert string
+
+        cmd = CreateFlatInsertCommandWithSP("Sp_InsertFlat", con, newFlat);             // create the command
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected==1 ? true : false;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+
+    }
+
+    // Create the SqlCommand for insert user
+    private SqlCommand CreateFlatInsertCommandWithSP(String spInsertFlat, SqlConnection con, Flat newFlat)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spInsertFlat;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        cmd.Parameters.AddWithValue("@city", newFlat.City);
+        cmd.Parameters.AddWithValue("@address", newFlat.Address);
+        cmd.Parameters.AddWithValue("@numOfRooms", newFlat.NumberOfRooms);
+        cmd.Parameters.AddWithValue("@price", newFlat.Price);
+
+        return cmd;
+    }
 }
