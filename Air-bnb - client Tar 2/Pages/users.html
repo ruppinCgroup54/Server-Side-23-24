@@ -2,12 +2,12 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
 
- <!-- font import -->
- <style>
+  <!-- font import -->
+  <style>
     @import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap');
   </style>
 
@@ -33,20 +33,48 @@
 </head>
 
 <body>
+  <div id="upper-section" class="container">
+
+    <div class="jumbotron">
+      <h3 class="display-4"><b>Enter a new flat</b></h3>
+    </div>
     <form id="userForm">
-        <input type="text" name="firstName" placeholder="First Name" required>
-        <input type="text" name="familyName" placeholder="Family Name" required>
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="password" name="password" placeholder="password" required>
-        <button>submit</button>
-    </form>
+      <!-- full name -->
+      <div class="form-row">
+        <div class="form-group col-md-4">
+          <label for="firstName">First name</label>
+          <input type="text" placeholder="First name" class="form-control form-control-lg" id="firstName" min="0"
+            max="8" required>
+        </div>
+        <!-- last name -->
+        <div class="form-group col-md-4">
+          <label for="lastName">Last Name</label>
+          <input type="text" placeholder="Last Name" class="form-control form-control-lg" id="lastName" required>
+        </div>
+      </div>
+      <!-- Email -->
+      <div class="form-row">
+        <div class="form-group col-md-8">
+          <label for="Email">Email</label>
+          <input type="email" class="form-control form-control-lg" id="email" placeholder="Enter email" name="email"
+            required>
+        </div>
+      </div>
+      <!-- password -->
+      <div class="form-row">
+        <div class="form-group col-md-8">
+          <label for="password">Password</label>
+          <input type="password" class="form-control form-control-lg" id="password" placeholder="Password" name="password"
+            required>
+        </div>
+      </div>
 
-    <form id="loginForm">
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="password" name="password" placeholder="password" required>
-        <button>submit</button>
-    </form>
+      <div class="form-row">
 
+        <button type="submit" class="btn btn-primary">Add user</button>
+      </div>
+    </form>
+  </div>
 
 </body>
 

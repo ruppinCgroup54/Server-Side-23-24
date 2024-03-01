@@ -11,7 +11,7 @@ function addNewUser(e) {
 
   let newUser = {
     FirstName: data.firstName.value,
-    FamilyName: data.familyName.value,
+    FamilyName: data.lastName.value,
     Email: data.email.value,
     Password: data.password.value,
   };
@@ -29,6 +29,7 @@ function addNewUser(e) {
 function sInsertCB(res) {
   console.log("res", res);
   swal("User has been registered!", "Great Job", "success");
+  sessionStorage.setItem('conectUser',res);
 }
 function eInsertCB(err) {
   console.log("err");
