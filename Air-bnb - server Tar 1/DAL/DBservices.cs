@@ -84,9 +84,11 @@ public class DBservices
             {
                 // close the db connection
                 con.Close();
+                
             }
+            
         }
-
+        return 0;
     }
 
     // Create the SqlCommand for insert user
