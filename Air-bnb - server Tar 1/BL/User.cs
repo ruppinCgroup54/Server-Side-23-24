@@ -13,6 +13,10 @@
             this.Email = email;
             this.Password = password;
         }
+
+        public User()
+        {
+        }
         public string FirstName { get => firstName; set => firstName = value; }
         public string FamilyName { get => familyName; set => familyName = value; }
         public string Email { get => email; set => email = value; }
@@ -24,10 +28,11 @@
             return dbs.Insert(this);
         }
 
-        public bool Login()
+        public User Login()
         {
             DBservices dbs = new DBservices();
-            return dbs.Login(this);
+            User u = dbs.Login(this);
+            return u;
         }
 
     }

@@ -104,7 +104,7 @@ public class DBservices
     }
 
     //login user
-    public bool Login(User loginUser)
+    public User Login(User loginUser)
     {
 
         SqlConnection con;
@@ -124,10 +124,21 @@ public class DBservices
 
         cmd = CreateUserLoginCommandWithSP("SP_LoginUser", con, loginUser);             // create the command
 
+        User u = new User();
+
         try
         {
-            object exist = cmd.ExecuteScalar(); // execute the command
-            return exist==null ? false : true;
+            SqlDataReader dataReader = cmd.ExecuteReader(); // execute the command
+
+            while (dataReader.Read()) 
+            { 
+                u.FirstName = dataReader["firstName"].ToString();
+                u.FamilyName = dataReader["familyName"].ToString();
+                u.Email = dataReader["email"].ToString();
+                u.Password = dataReader["password"].ToString();
+            }
+
+            return u;
         }
         catch (Exception ex)
         {
@@ -156,7 +167,7 @@ public class DBservices
 
         cmd.CommandText = spLoginUser;      // can be Select, Insert, Update, Delete 
 
-        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+        //cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
 
         cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
 
