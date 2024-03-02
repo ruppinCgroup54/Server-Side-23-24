@@ -23,10 +23,10 @@ function updateRegOrEdit() {
 
   let form = $("#userForm")[0];
 
-  form.firstName.value = currentUser.FirstName;
-  form.lastName.value = currentUser.FamilyName;
-  form.email.value = currentUser.Email;
-  form.password.value = currentUser.Password;
+  form.firstName.value = currentUser.firstName;
+  form.lastName.value = currentUser.familyName;
+  form.email.value = currentUser.email;
+  form.password.value = currentUser.password;
 }
 
 //Register user - Update user
@@ -119,7 +119,7 @@ function eUpdateCB(err) {
 }
 
 //Logout user
-function logoutUser() {
+ function logoutUser() {
   sessionStorage.removeItem("connectUser");
   window.location.href = "./flats.html";
 }

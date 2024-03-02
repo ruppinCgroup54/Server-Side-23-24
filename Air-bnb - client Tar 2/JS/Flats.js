@@ -23,7 +23,7 @@ function userConnectedOptions() {
       e.preventDefault();
     });
   } else {
-    $("#userName").text("Hi " + connectedUser.FirstName);
+    $("#userName").text("Hi " + connectedUser.firstName);
   }
 }
 
@@ -124,7 +124,7 @@ function createNewFlat(flat, i) {
                 <div class="card-footer">
                   <a href="./vacations.html?flatId=${
                     flat.id
-                  }" class="btn btn-primary flat-link" target="_blank">Order vacation</a>
+                  }" class="btn btn-primary flat-link" >Order vacation</a>
 
                 </div>
               </div>

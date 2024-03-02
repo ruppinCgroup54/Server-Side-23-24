@@ -8,6 +8,11 @@ $(document).ready(function () {
   $(`input[type="date"]`).change(checkDate);
 
   $("#getVacations").click(getVacations);
+
+  connectedUser = JSON.parse(sessionStorage.getItem("connectUser"));
+
+  $("#userName").text("Hi " + connectedUser.firstName);
+  $("#userId").val(connectedUser.email);
 });
 
 function getFlatIdFromQueryString() {
