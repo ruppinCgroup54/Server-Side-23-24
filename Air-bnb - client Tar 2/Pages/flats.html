@@ -45,11 +45,13 @@
 
 <body>
   <div id="buttons-div" class="container open-modal">
-    <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#loginModal">
+    <button type="button" class="btn btn-primary d-none" data-toggle="modal" data-target="#loginModal">
       Login
     </button>
 
-    <div class="btn-group d-none" role="group" aria-label="Basic example">
+
+    <div class="btn-group-vertical " role="group" aria-label="Basic example">
+      <span id="userName" class="w-100 text-center px-3">--</span>
       <a href="./users.html?update" class="btn btn-primary">Update user</a>
       <button id="log-out" class="btn btn-primary">Log-out</button>
     </div>
@@ -145,7 +147,8 @@
           </div>
         </div>
         <div class="modal-footer d-flex justify-content-center">
-          <div class="signup-section">Not a member yet? <a href="./users.html?update" class="text-info"> Sign Up</a>.</div>
+          <div class="signup-section">Not a member yet? <a href="./users.html?update" class="text-info"> Sign Up</a>.
+          </div>
         </div>
       </div>
     </div>

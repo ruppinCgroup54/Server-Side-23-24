@@ -10,11 +10,21 @@ $(document).ready(function () {
 });
 
 function userConnectedOptions() {
-  isConnected = sessionStorage.getItem("connectUser") !== undefined;
+  connectedUser = JSON.parse(sessionStorage.getItem("connectUser"));
+  isConnected = connectedUser !== null;
 
-  document.querySelectorAll("#buttons-div>*").forEach((ele) => {
-    ele.classList.toggle("d-none");
-  });
+  if (!isConnected) {
+    document.querySelectorAll("#buttons-div>*").forEach((ele) => {
+      ele.classList.toggle("d-none");
+    });
+
+    $(document).on("click", ".flat-link", (e) => {
+      swal("oops...", "You must login to book an apartment!", "error");
+      e.preventDefault();
+    });
+  } else {
+    $("#userName").text("Hi " + connectedUser.FirstName);
+  }
 }
 
 function addNewFlat(e) {
@@ -114,7 +124,7 @@ function createNewFlat(flat, i) {
                 <div class="card-footer">
                   <a href="./vacations.html?flatId=${
                     flat.id
-                  }" class="btn btn-primary" target="_blank">Order vacation</a>
+                  }" class="btn btn-primary flat-link" target="_blank">Order vacation</a>
 
                 </div>
               </div>

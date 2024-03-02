@@ -28,7 +28,8 @@ body {
 
 .btn-primary,
 .btn-primary:focus,
-.btn-primary:not(:disabled):not(.disabled):active {
+.btn-primary:not(:disabled):not(.disabled):active,
+.nav-pills .nav-link.active {
   background-color: var(--main-color);
   color: var(--white-color);
   border-color: var(--secondery-color);
@@ -61,7 +62,6 @@ body {
   }
   .card:hover {
     transform: scale(1.05);
-    z-index: 10;
   }
   .card-4 {
     transition-delay: 400ms;
@@ -87,11 +87,16 @@ body {
   }
 }
 
+.nav {
+  width: min-content;
+}
+
 .open-modal {
   padding: 2rem 0rem;
   position: fixed;
   top: 10px;
   left: 5vw;
+  z-index: 100;
 }
 
 @media (min-width: 576px) {

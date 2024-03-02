@@ -14,13 +14,19 @@ $(document).ready(function () {
 });
 
 function updateRegOrEdit() {
-  document.querySelector(".jumbotron .display-4 b").innerHTML = !isUpdate
-    ? "Enter user details"
-    : "Edit user details";
+  let currentUser = JSON.parse(sessionStorage.getItem("connectUser"));
 
-  document.querySelector("button[type='submit']").innerHTML = !isUpdate
-    ? "Ads user"
-    : "Update user";
+  document.querySelector(".jumbotron .display-4 b").innerHTML =
+    "Edit user details";
+
+  document.querySelector("button[type='submit']").innerHTML = "Update user";
+
+  let form = $("#userForm")[0];
+
+  form.firstName.value = currentUser.FirstName;
+  form.lastName.value = currentUser.FamilyName;
+  form.email.value = currentUser.Email;
+  form.password.value = currentUser.Password;
 }
 
 //Register user - Update user
@@ -43,16 +49,15 @@ function addNewUser(e) {
       eUpdateCB
     );
   } else {
-    // ajaxCall(
-    //   "POST",
-    //   server + "api/Users",
-    //   JSON.stringify(newUser),
-    //   sInsertCB,
-    //   eInsertCB
-    // );
+    ajaxCall(
+      "POST",
+      server + "api/Users",
+      JSON.stringify(newUser),
+      sInsertCB,
+      eInsertCB
+    );
   }
 
-  sInsertCB(newUser);
   e.target.reset();
   return false;
 }
@@ -85,6 +90,7 @@ function loginUser(e) {
     sLoginCB,
     eLoginCB
   );
+
   e.target.reset();
   return false;
 }
@@ -93,6 +99,7 @@ function sLoginCB(res) {
   console.log("res", res);
   //swal("User has been registered!", "Great Job", "success");
   sessionStorage.setItem("connectUser", JSON.stringify(res));
+  window.location.href = "./flats.html";
 }
 function eLoginCB(err) {
   console.log("err");
