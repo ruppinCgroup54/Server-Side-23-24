@@ -21,7 +21,7 @@ namespace Air_bnb.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(string id)
         {
-            Vacation? find = Vacation.Read(id);
+            Vacation find = Vacation.Read(id);
             return find != null ? Ok(find) : NotFound("There is no vaction with this ID");
         }
 
@@ -36,7 +36,7 @@ namespace Air_bnb.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] Vacation vacation)
         {
-            return vacation.Insert() ? Ok(vacation) : Conflict("Unable to add the vacation");
+            return vacation.Insert() != 0 ? Ok("Vacation is added.") : Conflict("Unable to add the vacation");
         }
 
         // PUT api/<VacationsController>/5
