@@ -488,4 +488,302 @@ public class DBservices
         return cmd;
     }
 
+    //----------------------------------//
+    //get all vacations
+    public List<Vacation> ReadVacations()
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        //String cStr = BuildInsertCommand(newUser);      // helper method to build the insert string
+
+        cmd = CreateVacationsCommandWithSP("SP_ReadVacations", con);             // create the command
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader();
+
+            List<Vacation> vacationsList = new();
+
+            while (dataReader.Read())
+            {
+                Vacation v = new();
+                v.FlatId = dataReader["flatId"].ToString();
+                v.UserEmail = dataReader["userEmail"].ToString();
+                v.StartDate = Convert.ToDateTime(dataReader["startDate"]);
+                v.EndDate = Convert.ToDateTime(dataReader["endDate"]);
+                v.Id = Convert.ToInt32(dataReader["id"]);
+
+                vacationsList.Add(v);
+            }
+
+            return vacationsList;
+
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    // Create the SqlCommand for all vacations
+    private SqlCommand CreateVacationsCommandWithSP(String spVacations, SqlConnection con)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spVacations;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        return cmd;
+    }
+
+
+    //----------------------------------//
+    //get vacation by id
+    public Vacation ReadVacationById(string id)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        //String cStr = BuildInsertCommand(newUser);      // helper method to build the insert string
+
+        cmd = CreateVacationByIdCommandWithSP("SP_ReadVacationById", con, id);             // create the command
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader();
+
+            Vacation v = new();
+
+            while (dataReader.Read())
+            {
+                v.FlatId = dataReader["flatId"].ToString();
+                v.UserEmail = dataReader["userEmail"].ToString();
+                v.StartDate = Convert.ToDateTime(dataReader["startDate"]);
+                v.EndDate = Convert.ToDateTime(dataReader["endDate"]);
+                v.Id = Convert.ToInt32(dataReader["id"]);
+            }
+
+            return v;
+
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    // Create the SqlCommand for vacation by id
+    private SqlCommand CreateVacationByIdCommandWithSP(String spVacationById, SqlConnection con, string id)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spVacationById;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        cmd.Parameters.AddWithValue("@id", id);
+
+        return cmd;
+    }
+
+    //----------------------------------//
+    //get vacation by dates
+    public List<Vacation> ReadVacationByIdDates(DateTime startDate, DateTime endDate)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        //String cStr = BuildInsertCommand(newUser);      // helper method to build the insert string
+
+        cmd = CreateVacationByDatesCommandWithSP("SP_ReadVacationByDates", con, startDate, endDate);             // create the command
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader();
+
+            List<Vacation> vacationsList = new();
+
+            while (dataReader.Read())
+            {
+                Vacation v = new();
+                v.FlatId = dataReader["flatId"].ToString();
+                v.UserEmail = dataReader["userEmail"].ToString();
+                v.StartDate = Convert.ToDateTime(dataReader["startDate"]);
+                v.EndDate = Convert.ToDateTime(dataReader["endDate"]);
+                v.Id = Convert.ToInt32(dataReader["id"]);
+                vacationsList.Add(v);
+            }
+
+            return vacationsList;
+
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    // Create the SqlCommand for vacation by dates
+    private SqlCommand CreateVacationByDatesCommandWithSP(String spVacationByDates, SqlConnection con, DateTime startDate, DateTime endDate)
+    {
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spVacationByDates;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        cmd.Parameters.AddWithValue("@startDate", startDate.Date);
+        cmd.Parameters.AddWithValue("@endDate", endDate.Date);
+
+        return cmd;
+    }
+
+    //----------------------------------//
+    //insert vacation
+    public int InsertVacation(Vacation newVacation)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        //String cStr = BuildInsertCommand(newUser);      // helper method to build the insert string
+
+        cmd = CreateInsertVacationCommandWithSP("SP_InsertVacation", con, newVacation);             // create the command
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery();
+            return numEffected;
+
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    // Create the SqlCommand for insert vacation
+    private SqlCommand CreateInsertVacationCommandWithSP(String spInsertVacation, SqlConnection con, Vacation newVacation)
+    {
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spInsertVacation;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        cmd.Parameters.AddWithValue("@flatId", newVacation.FlatId);
+        cmd.Parameters.AddWithValue("@userEmail", newVacation.UserEmail);
+        cmd.Parameters.AddWithValue("@startDate", newVacation.StartDate.Date);
+        cmd.Parameters.AddWithValue("@endDate", newVacation.EndDate.Date);
+
+        return cmd;
+    }
+
 }
