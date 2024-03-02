@@ -4,8 +4,6 @@
     {
         string firstName, familyName, email, password;
 
-        static List<User> usersList = new();
-
         public User(string firstName, string familyName, string email, string password)
         {
             this.FirstName = firstName;
@@ -33,6 +31,12 @@
             DBservices dbs = new DBservices();
             User u = dbs.Login(this);
             return u;
+        }
+
+        public static List<User> Read()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadUsers();
         }
 
     }

@@ -115,6 +115,93 @@ public class DBservices
     }
 
     //----------------------------------//
+    //get all users
+    public List<User> ReadUsers()
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        //String cStr = BuildInsertCommand(newUser);      // helper method to build the insert string
+
+        cmd = CreateUsersCommandWithSP("SP_ReadUsers", con);             // create the command
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(); // execute the command
+
+            List<User> usersList = new();
+
+            while (dataReader.Read())
+            {
+                User u = new();
+
+                u.FirstName = dataReader["firstName"].ToString();
+                u.FamilyName = dataReader["familyName"].ToString();
+                u.Email = dataReader["email"].ToString();
+                u.Password = dataReader["password"].ToString();
+
+                usersList.Add(u);
+            }
+
+            return usersList;
+        }
+        catch (SqlException e)
+        {
+            if (e.Message.Contains("Violation of PRIMARY KEY"))
+            {
+                return 0;
+            }
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+
+            }
+
+        }
+        return 0;
+    }
+
+    // Create the SqlCommand for insert user
+    private SqlCommand CreateUsersCommandWithSP(String spInsertUser, SqlConnection con)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spInsertUser;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        return cmd;
+    }
+
+
+    //----------------------------------//
     //login user
     public User Login(User loginUser)
     {

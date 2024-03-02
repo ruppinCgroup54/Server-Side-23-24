@@ -12,9 +12,10 @@ namespace Air_bnb.Controllers
     {
         // GET: api/<UsersController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IActionResult<string> Get()
         {
-            return new string[] { "value1", "value2" };
+            List<User> usersList= BL.User.Read();
+            return usersList.Count!=0 ? Ok(usersList): Conflict("There is no users.") ;
         }
 
         // GET api/<UsersController>/5
