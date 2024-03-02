@@ -5,7 +5,17 @@ $(document).ready(function () {
 
   renderFalts();
   getAllCities();
+
+  userConnectedOptions();
 });
+
+function userConnectedOptions() {
+  isConnected = sessionStorage.getItem("connectUser") !== undefined;
+
+  document.querySelectorAll("#buttons-div>*").forEach((ele) => {
+    ele.classList.toggle("d-none");
+  });
+}
 
 function addNewFlat(e) {
   let data = e.target;
