@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+
+    <title>DataTable Example</title>
+
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css">
+
+    <style type="text/css">
+        button {
+            margin-left: 10px;
+        }
+    </style>
+
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <script src="../JS/ajaxCalls.js"></script>
+
+
+    <script>
+
+        // will run when the document is ready
+        $(document).ready(function () {
+
+            server = "https://localhost:7014/";
+            // once the document is ready we fetch a list of cars from the server
+            ajaxCall("GET", server + "api/users", "", getSuccess, error);
+
+            $("#userForm").submit(onSubmitFunc); // wire the submit event to a function called f1
+            $("#editDiv").hide();
+        });
+
+        // wire all the buttons to their functions
+        function buttonEvents() {
+
+            $(document).on("click", ".editBtn", function () {
+                markSelected(this);
+                $("#editDiv").show();
+                $("#editDiv :input").prop("disabled", false); // edit mode: enable all controls in the form
+                $("#email").prop("disabled", true); // edit mode: enable all controls in the form
+                populateFields(this.getAttribute('data-userEmail')); // fill the form fields according to the selected row
+            });
+
+            $(document).on("click", ".viewBtn", function () {
+                markSelected(this);
+                $("#editDiv").show();
+                row.className = 'selected';
+                $("#editDiv :input").attr("disabled", "disabled"); // view mode: disable all controls in the form
+                populateFields(this.getAttribute('data-userEmail'));
+            });
+
+            $(document).on("click", ".deleteBtn", function () {
+                markSelected(this);
+                var userEmail = this.getAttribute('data-userEmail');
+                swal({ // this will open a dialouge 
+                    title: "Are you sure?",
+                    text: "",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true
+                })
+                    .then(function (willDelete) {
+                        if (willDelete) DeleteUser(userEmail);
+                        else swal("Not Deleted!");
+                    });
+            });
+        }
+
+        // mark the selected row
+        function markSelected(btn) {
+            $("#usersTable tr").removeClass("selected"); // remove seleced class from rows that were selected before
+            row = (btn.parentNode).parentNode; // button is in TD which is in Row
+            row.className = 'selected'; // mark as selected
+        }
+
+        // Delete a car from the server
+        function DeleteUser(email) {
+            ajaxCall("DELETE", server + "api/users" + email, "", deleteSuccess, error);
+        }
+
+        function onSubmitFunc() {
+            let userAfterEdit = {
+                Email: user.email,
+                FirstName: $("#firstName").val(),
+                FamilyName: $("#familyName").val(),
+                IsActive: $("#isActive").is(":checked"),
+                Password: ""
+            }
+
+            // update a new Car record to the server
+            ajaxCall("PUT", server + "api/users", JSON.stringify(userAfterEdit), updateSuccess, error);
+            return false;
+        }
+
+        // fill the form fields
+        function populateFields(userEmail) {
+            user = getUser(userEmail);
+            $("#firstName").val(user.firstName);
+            $("#familyName").val(user.familyName);
+            $("#email").val(user.email);
+            $("#isActive").prop('checked', user.isActive);
+        }
+
+        // get a car according to its Id
+        function getUser(email) {
+            return users.find(u => u.email == email);
+        }
+
+        // success callback function after update
+        function updateSuccess(usersdata) {
+            tbl.clear();
+            users = usersdata;
+            redrawTable(tbl, usersdata);
+            buttonEvents();
+            $("#editDiv").hide();
+            swal("Updated Successfuly!", "Great Job", "success");
+        }
+
+        // success callback function after delete
+        function deleteSuccess(usersdata) {
+            tbl.clear();
+            redrawTable(tbl, usersdata);
+            buttonEvents(); // after redrawing the table, we must wire the new buttons
+            $("#editDiv").hide();
+            swal("Deleted Successfuly!", "Great Job", "success");
+        }
+
+        // redraw a datatable with new data
+        function redrawTable(tbl, data) {
+            tbl.clear();
+            for (var i = 0; i < data.length; i++) {
+                tbl.row.add(data[i]);
+            }
+            tbl.draw();
+        }
+
+        // this function is activated in case of a success
+        function getSuccess(usersdata) {
+            users = usersdata; // keep the cars array in a global variable;
+            try {
+                tbl = $('#usersTable').DataTable({
+                    data: usersdata,
+                    pageLength: 5,
+                    columns: [
+                        { data: "firstName" },
+                        { data: "familyName" },
+                        { data: "email" },
+                        {
+                            data: "isActive",
+                            render: function (data, type, row, meta) {
+                                if (data == true)
+                                    return '<input type="checkbox" checked disabled="disabled" />';
+                                else
+                                    return '<input type="checkbox" disabled="disabled"/>';
+                            }
+                        },
+                        {
+                            render: function (data, type, row, meta) {
+                                let dataUser = "data-UserEmail='" + row.email + "'";
+
+                                editBtn = "<button type='button' class = 'editBtn btn btn-success' " + dataUser + "> Edit </button>";
+                                viewBtn = "<button type='button' class = 'viewBtn btn btn-info' " + dataUser + "> View </button>";
+                                deleteBtn = "<button type='button' class = 'deleteBtn btn btn-danger' " + dataUser + "> Delete </button>";
+                                return editBtn + viewBtn + deleteBtn;
+                            }
+                        }
+                    ],
+                });
+                buttonEvents();
+            }
+
+            catch (err) {
+                alert(err);
+            }
+        }
+
+        // this function is activated in case of a failure
+        function error(err) {
+            swal("Error: " + err);
+        }
+
+    </script>
+
+</head>
+
+<body>
+
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Users DataTable</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <form id="pForm">
+            <table id="usersTable" class="display nowrap" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>First name</th>
+                        <th>Family name</th>
+                        <th>Email</th>
+                        <th>Is active</th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
+
+        </form>
+
+        <div id="editDiv">
+            <form id="userForm">
+                <div class="form-group row">
+                    <div class="form-group col-sm-3">
+                        <label for="firstName"><span class="red-star">★ </span>First name</label>
+                        <input type="text" class="form-control" id="firstName" placeholder="Enter the manufacturer name"
+                            required>
+                    </div>
+
+
+                    <div class="form-group col-sm-3">
+                        <label for="familyName"><span class="red-star">★ </span>Family name</label>
+                        <input type="text" class="form-control" id="familyName" placeholder="Enter the model name"
+                            required>
+                    </div>
+
+                    <div class="form-group col-sm-3">
+                        <label for="email"><span class="red-star">★ </span>Email</label>
+                        <input type="text" class="form-control" id="email" placeholder="Enter the model name" required>
+                    </div>
+
+                    <div class="form-group col-sm-3">
+                        <label for="isActive"><span class="red-star">★ </span>Is active?</label>
+                        <input type="checkbox" class="form-control" id="isActive" checked />
+                    </div>
+
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg" id="saveBTN">Save</button>
+
+            </form>
+        </div>
+
+    </div>
+
+
+
+
+</body>
+
+</html>

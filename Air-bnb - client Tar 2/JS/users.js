@@ -43,8 +43,8 @@ function addNewUser(e) {
   if (isUpdate) {
     ajaxCall(
       "PUT",
-      server + "api/Users/login",
-      JSON.stringify(loginUser),
+      server + `api/Users/${data.email.value}`,
+      JSON.stringify(newUser),
       sUpdateCB,
       eUpdateCB
     );
@@ -99,7 +99,8 @@ function sLoginCB(res) {
   console.log("res", res);
   //swal("User has been registered!", "Great Job", "success");
   sessionStorage.setItem("connectUser", JSON.stringify(res));
-  window.location.href = "./flats.html";
+
+  window.location.href = res.email === 'admin@gmail.com '?"./" : "./flats.html";
 }
 function eLoginCB(err) {
   console.log("err");
@@ -112,6 +113,7 @@ function sUpdateCB(res) {
   console.log("res", res);
   //swal("User has been registered!", "Great Job", "success");
   sessionStorage.setItem("connectUser", JSON.stringify(res));
+  window.location.href='./flats.html'
 }
 function eUpdateCB(err) {
   console.log("err");

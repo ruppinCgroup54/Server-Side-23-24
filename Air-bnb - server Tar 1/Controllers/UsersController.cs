@@ -12,7 +12,7 @@ namespace Air_bnb.Controllers
     {
         // GET: api/<UsersController>
         [HttpGet]
-        public IActionResult<string> Get()
+        public IActionResult Get()
         {
             List<User> usersList= BL.User.Read();
             return usersList.Count!=0 ? Ok(usersList): Conflict("There is no users.") ;
@@ -42,9 +42,15 @@ namespace Air_bnb.Controllers
         }
 
         // PUT api/<UsersController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut]
+        public List<User> Put([FromBody] User user)
         {
+            return user.UpdateUser();
+        }
+        [HttpPut("{email}")]
+        public User Put(string email, [FromBody] User user)
+        {
+            return user.UpdateUser(email);
         }
 
         // DELETE api/<UsersController>/5
