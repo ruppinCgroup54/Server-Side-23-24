@@ -44,19 +44,19 @@ function addNewFlat(e) {
     "POST",
     server + "api/flats",
     JSON.stringify(newFlat),
-    sInsertCB,
-    eInsertCB
+    sInsertFlatCB,
+    eInsertFlatCB
   );
   e.target.reset();
   return false;
 }
 
-function sInsertCB(res) {
+function sInsertFlatCB(res) {
   console.log("res", res);
   swal("Flat has ben submitted!", "Great Job", "success");
   renderFalts();
 }
-function eInsertCB(err) {
+function eInsertFlatCB(err) {
   console.log("err");
   alert(err.responseText);
 }
