@@ -1,6 +1,9 @@
 $(document).ready(function () {
   // server = `https://proj.ruppin.ac.il/cgroup54/test2/tar1/`;
-  server = (location.hostname === "localhost" || location.hostname === "127.0.0.1"? `https://localhost:7014/` : `https://proj.ruppin.ac.il/cgroup54/test2/tar1/`);
+  server =
+    location.hostname === "localhost" || location.hostname === "127.0.0.1"
+      ? `https://localhost:7014/`
+      : `https://proj.ruppin.ac.il/cgroup54/test2/tar1/`;
 
   $("#flatForm").submit(addNewFlat);
 
@@ -32,8 +35,6 @@ function addNewFlat(e) {
   let data = e.target;
 
   let newFlat = {
-    Id:
-      Math.random().toString(36).slice(2, 12) + new Date().getTime().toString(),
     City: data.city.value,
     Address: data.address.value,
     NumberOfRooms: Number(data.inputCity.value),
@@ -43,19 +44,19 @@ function addNewFlat(e) {
     "POST",
     server + "api/flats",
     JSON.stringify(newFlat),
-    sInsertCB,
-    eInsertCB
+    sInsertFlatCB,
+    eInsertFlatCB
   );
   e.target.reset();
   return false;
 }
 
-function sInsertCB(res) {
+function sInsertFlatCB(res) {
   console.log("res", res);
   swal("Flat has ben submitted!", "Great Job", "success");
   renderFalts();
 }
-function eInsertCB(err) {
+function eInsertFlatCB(err) {
   console.log("err");
   alert(err.responseText);
 }

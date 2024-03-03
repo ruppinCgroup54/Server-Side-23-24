@@ -1,5 +1,8 @@
 $(document).ready(function () {
-  server = (location.hostname === "localhost" || location.hostname === "127.0.0.1"? `https://localhost:7014/` : `https://proj.ruppin.ac.il/cgroup54/test2/tar1/`);
+  server =
+    location.hostname === "localhost" || location.hostname === "127.0.0.1"
+      ? `https://localhost:7014/`
+      : `https://proj.ruppin.ac.il/cgroup54/test2/tar1/`;
   // server = "https://localhost:7014/";
 
   isUpdate = window.location.search.slice(1) === "update";
@@ -100,7 +103,8 @@ function sLoginCB(res) {
   //swal("User has been registered!", "Great Job", "success");
   sessionStorage.setItem("connectUser", JSON.stringify(res));
 
-  window.location.href = res.email === 'admin@gmail.com '?"./" : "./flats.html";
+  window.location.href =
+    res.email === "admin@gmail.com " ? "./" : "./flats.html";
 }
 function eLoginCB(err) {
   console.log("err");
@@ -113,7 +117,7 @@ function sUpdateCB(res) {
   console.log("res", res);
   //swal("User has been registered!", "Great Job", "success");
   sessionStorage.setItem("connectUser", JSON.stringify(res));
-  window.location.href='./flats.html'
+  window.location.href = "./flats.html";
 }
 function eUpdateCB(err) {
   console.log("err");
@@ -121,7 +125,7 @@ function eUpdateCB(err) {
 }
 
 //Logout user
- function logoutUser() {
+function logoutUser() {
   sessionStorage.removeItem("connectUser");
   window.location.href = "./flats.html";
 }
