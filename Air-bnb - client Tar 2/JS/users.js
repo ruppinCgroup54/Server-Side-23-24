@@ -1,6 +1,6 @@
 $(document).ready(function () {
-  //server = (window.location.hostname === "localhost" || window.location.hostname === `7014` ? `https://localhost:7014/` : `https://proj.ruppin.ac.il/cgroup54/test2/tar1/`);
-  server = "https://localhost:7014/";
+  server = (location.hostname === "localhost" || location.hostname === "127.0.0.1"? `https://localhost:7014/` : `https://proj.ruppin.ac.il/cgroup54/test2/tar1/`);
+  // server = "https://localhost:7014/";
 
   isUpdate = window.location.search.slice(1) === "update";
 
