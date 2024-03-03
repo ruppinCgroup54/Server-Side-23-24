@@ -307,6 +307,7 @@ public class DBservices
                 u.FamilyName = dataReader["familyName"].ToString();
                 u.Email = dataReader["email"].ToString();
                 u.Password = dataReader["password"].ToString();
+                u.IsActive = Convert.ToBoolean(dataReader["isActive"]);
             }
 
             return u;

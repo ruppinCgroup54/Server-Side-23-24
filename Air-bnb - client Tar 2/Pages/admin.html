@@ -16,11 +16,27 @@
         href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css">
 
     <style type="text/css">
-        button {
-            margin-left: 10px;
-        }
+
     </style>
 
+    <!-- font import -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap');
+    </style>
+
+    <!-- import JQUERY -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+    <!-- import BOOTSTRAP -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+        crossorigin="anonymous"></script>
+
+    <!-- import CSS -->
+    <link rel="stylesheet" href="../CSS/Flats.css">
 
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -42,44 +58,35 @@
             // once the document is ready we fetch a list of cars from the server
             ajaxCall("GET", server + "api/users", "", getSuccess, error);
 
-            $("#userForm").submit(onSubmitFunc); // wire the submit event to a function called f1
-            $("#editDiv").hide();
+            $("#dataTable").hide();
+            $("#manageBtn").click(showDataTable)
+
         });
+
+        function showDataTable(){
+            $("#dataTable").show();
+            $("#manageBtn").removeClass("d-block")
+            $("#manageBtn").addClass("d-none")
+        }
 
         // wire all the buttons to their functions
         function buttonEvents() {
-
             $(document).on("click", ".editBtn", function () {
                 markSelected(this);
-                $("#editDiv").show();
-                $("#editDiv :input").prop("disabled", false); // edit mode: enable all controls in the form
-                $("#email").prop("disabled", true); // edit mode: enable all controls in the form
-                populateFields(this.getAttribute('data-userEmail')); // fill the form fields according to the selected row
+                let email=this.getAttribute('data-UserEmail');
+                $(`[data-userActive="check${email}"]`).prop("disabled", false);
+                $(`[data-userEmail="${email}"]`).toggle();
+            });
+            
+            $(document).on("click", ".saveBtn", function () {
+                markSelected(this);
+                let email=this.getAttribute('data-UserEmail');
+                $(`[data-userActive="check${email}"]`).prop("disabled", true);
+                user=users.find(u=>u.email==email);
+                onSubmitFunc(user);
+                $(`[data-userEmail="${email}"]`).toggle();
             });
 
-            $(document).on("click", ".viewBtn", function () {
-                markSelected(this);
-                $("#editDiv").show();
-                row.className = 'selected';
-                $("#editDiv :input").attr("disabled", "disabled"); // view mode: disable all controls in the form
-                populateFields(this.getAttribute('data-userEmail'));
-            });
-
-            $(document).on("click", ".deleteBtn", function () {
-                markSelected(this);
-                var userEmail = this.getAttribute('data-userEmail');
-                swal({ // this will open a dialouge 
-                    title: "Are you sure?",
-                    text: "",
-                    icon: "warning",
-                    buttons: true,
-                    dangerMode: true
-                })
-                    .then(function (willDelete) {
-                        if (willDelete) DeleteUser(userEmail);
-                        else swal("Not Deleted!");
-                    });
-            });
         }
 
         // mark the selected row
@@ -89,38 +96,15 @@
             row.className = 'selected'; // mark as selected
         }
 
-        // Delete a car from the server
-        function DeleteUser(email) {
-            ajaxCall("DELETE", server + "api/users" + email, "", deleteSuccess, error);
-        }
 
-        function onSubmitFunc() {
-            let userAfterEdit = {
-                Email: user.email,
-                FirstName: $("#firstName").val(),
-                FamilyName: $("#familyName").val(),
-                IsActive: $("#isActive").is(":checked"),
-                Password: ""
-            }
+        function onSubmitFunc(user) {
+            user.isActive=$(`[data-userActive="check${user.email}"]`).is(":checked");
 
             // update a new Car record to the server
-            ajaxCall("PUT", server + "api/users", JSON.stringify(userAfterEdit), updateSuccess, error);
+            ajaxCall("PUT", server + "api/users", JSON.stringify(user), updateSuccess, error);
             return false;
         }
 
-        // fill the form fields
-        function populateFields(userEmail) {
-            user = getUser(userEmail);
-            $("#firstName").val(user.firstName);
-            $("#familyName").val(user.familyName);
-            $("#email").val(user.email);
-            $("#isActive").prop('checked', user.isActive);
-        }
-
-        // get a car according to its Id
-        function getUser(email) {
-            return users.find(u => u.email == email);
-        }
 
         // success callback function after update
         function updateSuccess(usersdata) {
@@ -128,7 +112,6 @@
             users = usersdata;
             redrawTable(tbl, usersdata);
             buttonEvents();
-            $("#editDiv").hide();
             swal("Updated Successfuly!", "Great Job", "success");
         }
 
@@ -137,7 +120,6 @@
             tbl.clear();
             redrawTable(tbl, usersdata);
             buttonEvents(); // after redrawing the table, we must wire the new buttons
-            $("#editDiv").hide();
             swal("Deleted Successfuly!", "Great Job", "success");
         }
 
@@ -165,9 +147,9 @@
                             data: "isActive",
                             render: function (data, type, row, meta) {
                                 if (data == true)
-                                    return '<input type="checkbox" checked disabled="disabled" />';
+                                    return `<input data-userActive="check${row.email}" type="checkbox" checked disabled="disabled" />`;
                                 else
-                                    return '<input type="checkbox" disabled="disabled"/>';
+                                    return `<input data-userActive="check${row.email}" type="checkbox" disabled="disabled"/>`;
                             }
                         },
                         {
@@ -175,9 +157,8 @@
                                 let dataUser = "data-UserEmail='" + row.email + "'";
 
                                 editBtn = "<button type='button' class = 'editBtn btn btn-success' " + dataUser + "> Edit </button>";
-                                viewBtn = "<button type='button' class = 'viewBtn btn btn-info' " + dataUser + "> View </button>";
-                                deleteBtn = "<button type='button' class = 'deleteBtn btn btn-danger' " + dataUser + "> Delete </button>";
-                                return editBtn + viewBtn + deleteBtn;
+                                saveBtn = "<button style='display: none'  type='button' class = 'saveBtn btn btn-warning' " + dataUser + "> Save </button>";
+                                return editBtn + saveBtn;
                             }
                         }
                     ],
@@ -200,67 +181,35 @@
 </head>
 
 <body>
-    <button type="submit" class="btn btn-primary ">Manage users</button>
+    <button id="manageBtn" class="btn btn-primary d-block mx-auto my-5">Manage users</button>
 
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#">Users DataTable</a>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container">
-        <form id="pForm">
-            <table id="usersTable" class="display nowrap" style="width:100%">
-                <thead>
-                    <tr>
-                        <th>First name</th>
-                        <th>Family name</th>
-                        <th>Email</th>
-                        <th>Is active</th>
-                        <th></th>
-                    </tr>
-                </thead>
-            </table>
-
-        </form>
-
-        <div id="editDiv">
-            <form id="userForm">
-                <div class="form-group row">
-                    <div class="form-group col-sm-3">
-                        <label for="firstName"><span class="red-star">★ </span>First name</label>
-                        <input type="text" class="form-control" id="firstName" placeholder="Enter the manufacturer name"
-                            required>
-                    </div>
-
-
-                    <div class="form-group col-sm-3">
-                        <label for="familyName"><span class="red-star">★ </span>Family name</label>
-                        <input type="text" class="form-control" id="familyName" placeholder="Enter the model name"
-                            required>
-                    </div>
-
-                    <div class="form-group col-sm-3">
-                        <label for="email"><span class="red-star">★ </span>Email</label>
-                        <input type="text" class="form-control" id="email" placeholder="Enter the model name" required>
-                    </div>
-
-                    <div class="form-group col-sm-3">
-                        <label for="isActive"><span class="red-star">★ </span>Is active?</label>
-                        <input type="checkbox" class="form-control" id="isActive" checked />
-                    </div>
-
+    <div id="dataTable">
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Users DataTable</a>
                 </div>
+            </div>
+        </nav>
 
-                <button type="submit" class="btn btn-primary btn-lg" id="saveBTN">Save</button>
+        <div class="container">
+            <form id="pForm">
+                <table id="usersTable" class="display nowrap" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>First name</th>
+                            <th>Family name</th>
+                            <th>Email</th>
+                            <th>Is active</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                </table>
 
             </form>
+
         </div>
-
     </div>
-
 
 
 

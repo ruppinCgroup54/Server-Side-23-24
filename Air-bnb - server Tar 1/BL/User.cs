@@ -32,6 +32,14 @@
         {
             DBservices dbs = new DBservices();
             User u = dbs.Login(this);
+            if (u==null)
+            {
+                throw new KeyNotFoundException();
+            }
+            if (!u.IsActive)
+            {
+                throw new AccessViolationException();
+            }
             return u;
         }
 

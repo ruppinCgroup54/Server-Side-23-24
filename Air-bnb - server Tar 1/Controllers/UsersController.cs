@@ -34,11 +34,21 @@ namespace Air_bnb.Controllers
 
         // POST login
         [HttpPost("login")]
-        public User Login([FromBody] User loginUser)
+        public IActionResult Login([FromBody] User loginUser)
         {
-            
-             return loginUser.Login();
-           
+            try
+            {
+                return Ok(loginUser.Login());
+            }
+            catch (AccessViolationException e)
+            {
+                return Forbid("this user is not active.");
+            }
+            catch (KeyNotFoundException e)
+            {
+                return NotFound("user is not found.");
+            }
+
         }
 
         // PUT api/<UsersController>/5
