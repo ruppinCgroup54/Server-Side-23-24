@@ -32,7 +32,7 @@
         {
             DBservices dbs = new DBservices();
             User u = dbs.Login(this);
-            if (u==null)
+            if (u.email==null)
             {
                 throw new KeyNotFoundException();
             }
