@@ -69,7 +69,7 @@
             renderMonthsOptions();
             $('#dtlMonths').change(checkFromList);
 
-            $('#formReport').submit(() => false);
+            $('#formReport').submit(generateReport);
         });
 
         function renderMonthsOptions() {
@@ -79,10 +79,12 @@
         }
 
         function generateReport(e) {
-            let month = e.target.dtlMonths;
+            let month = parseInt(e.target.dtlMonths.value);
 
-            ajaxCall("GET", server + `api/vacations/report/${month}`, "", sReportCB, error);
+            
 
+            ajaxCall("GET", server + `api/Vacations/report/${month}`, "", sReportCB, error);
+return false;
         }
 
         function sReportCB(data) {
@@ -90,11 +92,15 @@
             console.log('data', data)
             let dataStr = data.map((row) => {
                 return ` 
-                    <tr>
-                        <td>${row.city}</td>
-                        <td>${row.AvaragePerNight}</td>
+                    <tr >
+                        <th scope="row">${row.city}</td>
+                        <td>${row.averagePerNight}</td>
                     </tr>`
             });
+
+            $('#reportBody').html(dataStr);
+
+            $('#reportDiv').removeClass('hide')
 
         }
 
@@ -221,7 +227,8 @@
 
         // this function is activated in case of a failure
         function error(err) {
-            swal("Error: " + err);
+            console.log('err', err)
+            swal("Error " , err.responseText,'error');
         }
 
     </script>
@@ -279,15 +286,17 @@
             </form>
         </div>
 
-        <div>
-            <table>
-                <thead>
-                    <td>city</td>
-                    <td>Average cost per night</td>
+        <div id="reportDiv" class="table-responsive w-75 m-auto hide">
+            <table class="table table-sm text-center table-hover table-bordered ">
+                <thead class="thead-dark">
+                    <th scope="col">city</th>
+                    <th scope="col">Average cost per night</th>
                 </thead>
-                <tbody>
+                <tbody id="reportBody">
 
                 </tbody>
+                <caption id="tableCaption">Average cost per night for </caption>
+
             </table>
         </div>
 
