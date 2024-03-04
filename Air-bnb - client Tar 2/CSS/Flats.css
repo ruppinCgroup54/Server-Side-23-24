@@ -130,3 +130,8 @@ body {
 .signup-section {
   padding: 0.3rem 0rem;
 }
+
+/* ------ admin page ------- */
+  #usersTable_wrapper {
+    flex-direction: column;
+  }

@@ -104,7 +104,7 @@ function sLoginCB(res) {
   sessionStorage.setItem("connectUser", JSON.stringify(res));
 
   window.location.href =
-    res.email === "admin@gmail.com " ? "./" : "./flats.html";
+    res.email === "admin@gmail.com" ? "./admin.html" : "./flats.html";
 }
 function eLoginCB(err) {
   console.log("err");

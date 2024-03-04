@@ -46,10 +46,15 @@
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
     <script src="../JS/ajaxCalls.js"></script>
 
 
     <script>
+
+        months = ["January", "February", "March", "April", "May", "June", "July",
+            "August", "September", "October", "November", "December"];
 
         // will run when the document is ready
         $(document).ready(function () {
@@ -59,11 +64,54 @@
             ajaxCall("GET", server + "api/users", "", getSuccess, error);
 
             $("#dataTable").hide();
-            $("#manageBtn").click(showDataTable)
+            $("#manageBtn").click(showDataTable);
 
+            renderMonthsOptions();
+            $('#dtlMonths').change(checkFromList);
+
+            $('#formReport').submit(() => false);
         });
 
-        function showDataTable(){
+        function renderMonthsOptions() {
+            let monthStr = months.map((m, i) => `<option value=${i + 1}>${m}</option>`)
+
+            $('#months').append(monthStr);
+        }
+
+        function generateReport(e) {
+            let month = e.target.dtlMonths;
+
+            ajaxCall("GET", server + `api/vacations/report/${month}`, "", sReportCB, error);
+
+        }
+
+        function sReportCB(data) {
+
+            console.log('data', data)
+            let dataStr = data.map((row) => {
+                return ` 
+                    <tr>
+                        <td>${row.city}</td>
+                        <td>${row.AvaragePerNight}</td>
+                    </tr>`
+            });
+
+        }
+
+        function checkFromList(e) {
+
+            let month = e.target
+            if (!months.find((m, i) => i + 1 == month.value)) {
+                month.validity.valid = false;
+                month.setCustomValidity('Pick a valid monthe');
+            } else {
+                month.validity.valid = true;
+                month.setCustomValidity("");
+            }
+
+        }
+
+        function showDataTable() {
             $("#dataTable").show();
             $("#manageBtn").removeClass("d-block")
             $("#manageBtn").addClass("d-none")
@@ -73,16 +121,16 @@
         function buttonEvents() {
             $(document).on("click", ".editBtn", function () {
                 markSelected(this);
-                let email=this.getAttribute('data-UserEmail');
+                let email = this.getAttribute('data-UserEmail');
                 $(`[data-userActive="check${email}"]`).prop("disabled", false);
                 $(`[data-userEmail="${email}"]`).toggle();
             });
-            
+
             $(document).on("click", ".saveBtn", function () {
                 markSelected(this);
-                let email=this.getAttribute('data-UserEmail');
+                let email = this.getAttribute('data-UserEmail');
                 $(`[data-userActive="check${email}"]`).prop("disabled", true);
-                user=users.find(u=>u.email==email);
+                user = users.find(u => u.email == email);
                 onSubmitFunc(user);
                 $(`[data-userEmail="${email}"]`).toggle();
             });
@@ -98,7 +146,7 @@
 
 
         function onSubmitFunc(user) {
-            user.isActive=$(`[data-userActive="check${user.email}"]`).is(":checked");
+            user.isActive = $(`[data-userActive="check${user.email}"]`).is(":checked");
 
             // update a new Car record to the server
             ajaxCall("PUT", server + "api/users", JSON.stringify(user), updateSuccess, error);
@@ -181,35 +229,69 @@
 </head>
 
 <body>
-    <button id="manageBtn" class="btn btn-primary d-block mx-auto my-5">Manage users</button>
+    <section id="usersData">
 
-    <div id="dataTable">
-        <nav class="navbar navbar-default">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="#">Users DataTable</a>
+        <button id="manageBtn" class="btn btn-primary d-block mx-auto my-5">Manage users</button>
+
+        <div id="dataTable">
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">Users DataTable</a>
+                    </div>
                 </div>
-            </div>
-        </nav>
+            </nav>
 
-        <div class="container">
-            <form id="pForm">
-                <table id="usersTable" class="display nowrap" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th>First name</th>
-                            <th>Family name</th>
-                            <th>Email</th>
-                            <th>Is active</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                </table>
+            <div class="container">
+                <form id="pForm">
+                    <table id="usersTable" class="display nowrap" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>First name</th>
+                                <th>Family name</th>
+                                <th>Email</th>
+                                <th>Is active</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table>
+
+                </form>
+
+            </div>
+        </div>
+    </section>
+
+
+    <section id="report">
+
+        <div id="selectMonth">
+            <form id="formReport" class="d-flex flex-wrap justify-content-center align-items-center">
+
+                <input list="months" id="dtlMonths" class="m-3" required min=1 max=12 />
+                <datalist id="months">
+                    <!-- import months -->
+                </datalist>
+
+                <button class="btn btn-primary">Generate reaport <i class="bi bi-file-ruled-fill"></i></button>
+
 
             </form>
-
         </div>
-    </div>
+
+        <div>
+            <table>
+                <thead>
+                    <td>city</td>
+                    <td>Average cost per night</td>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+
+    </section>
 
 
 
