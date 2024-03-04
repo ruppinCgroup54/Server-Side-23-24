@@ -11,6 +11,8 @@ $(document).ready(function () {
   getAllCities();
 
   userConnectedOptions();
+
+  $(window).on("resize", renderFalts);
 });
 
 function userConnectedOptions() {
