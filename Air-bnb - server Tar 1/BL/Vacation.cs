@@ -6,14 +6,6 @@
         string userEmail, flatId;
         DateTime startDate, endDate;
 
-        //static List<Vacation> vacationsList = new()
-        //{
-        //new Vacation("a","a","1",new DateTime(2023,01,10),new DateTime(2023,01,15)),
-        //new Vacation("b","b","1",new DateTime(2023,01,05),new DateTime(2023,01,08)),
-        //new Vacation("c","c","2",new DateTime(2023,01,10),new DateTime(2023,01,15)),
-        //new Vacation("d","d","3",new DateTime(2023,01,13),new DateTime(2023,01,18)),
-        //};
-
         public Vacation(int id, string userEmail, string flatId, DateTime startDate, DateTime endDate)
         {
             Id = id;
@@ -72,6 +64,12 @@
             //return vacationsList.FindAll(vac => BetweenDates(startDate, endDate, vac.startDate) || BetweenDates(startDate, endDate, vac.EndDate));
             DBservices dbs = new DBservices();
             return dbs.ReadVacationByIdDates(startDate, endDate);
+        }
+
+        static public List<Object> getAveragePerNight(int month)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.getAveragePerNight(month);
         }
     }
 
