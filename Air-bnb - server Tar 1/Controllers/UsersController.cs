@@ -34,6 +34,8 @@ namespace Air_bnb.Controllers
 
         // POST login
         [HttpPost("login")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult Login([FromBody] User loginUser)
         {
             try
@@ -42,7 +44,7 @@ namespace Air_bnb.Controllers
             }
             catch (AccessViolationException e)
             {
-                return Forbid("this user is not active.");
+                return StatusCode(StatusCodes.Status403Forbidden,"this user is not active.");
             }
             catch (KeyNotFoundException e)
             {
