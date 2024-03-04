@@ -25,6 +25,14 @@ namespace Air_bnb.Controllers
             return find != null ? Ok(find) : NotFound("There is no vaction with this ID");
         }
 
+        // GET api/<VacationsController>/5
+        [HttpGet("report/{month}")]
+        public IActionResult Get(int month)
+        {
+           List<Object> objList= Vacation.getAveragePerNight(month);
+            return objList.Count !=  0? Ok(objList) : NotFound("There is no vaction on this month.");
+        }
+
         [HttpGet("getByDates/{startDate}/{endDate}")]
         public IActionResult GetByDates(DateTime startDate, DateTime endDate)
         {
