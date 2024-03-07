@@ -2,11 +2,11 @@
 {
     public class Vacation
     {
-        int id;
-        string userEmail, flatId;
+        int id, flatId;
+        string userEmail;
         DateTime startDate, endDate;
 
-        public Vacation(int id, string userEmail, string flatId, DateTime startDate, DateTime endDate)
+        public Vacation(int id, string userEmail, int flatId, DateTime startDate, DateTime endDate)
         {
             Id = id;
             UserEmail = userEmail;
@@ -21,7 +21,7 @@
 
         public int Id { get => id; set => id = value; }
         public string UserEmail { get => userEmail; set => userEmail = value; }
-        public string FlatId { get => flatId; set => flatId = value; }
+        public int FlatId { get => flatId; set => flatId = value; }
         public DateTime StartDate { get => startDate; set => startDate = value; }
         public DateTime EndDate { get => endDate; set => endDate = value; }
 
@@ -34,7 +34,7 @@
         {
             DBservices dbs = new DBservices();
             List<Vacation> vacationsList = dbs.ReadVacations();
-            if (vacationsList.TrueForAll(vac => vac.Id != this.Id && !SameDatesAndFlat(vac, this)))
+            if (vacationsList.TrueForAll(vac => !SameDatesAndFlat(vac, this)))
             {
                 return dbs.InsertVacation(this);
             }
@@ -47,17 +47,17 @@
             return dbs.ReadVacations();
         }
 
-        static public Vacation Read(string id)
+        static public List<Vacation> Read(string id)
         {
             DBservices dbs = new DBservices();
             return dbs.ReadVacationById(id);
         }
 
 
-        static bool BetweenDates(DateTime start, DateTime end, DateTime check)
+       /* static bool BetweenDates(DateTime start, DateTime end, DateTime check)
         {
             return start <= check && check <= end;
-        }
+        }*/
 
         static public List<Vacation> GetByDates(DateTime startDate, DateTime endDate)
         {

@@ -29,7 +29,7 @@ namespace Air_bnb.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] User newUser)
         {
-            return newUser.Insert()==1 ? Ok(newUser) : Conflict(new { message = $"An existing record with the id" });
+            return newUser.Insert()==1 ? Ok(newUser) : Conflict(new { message = "An existing record with this email" });
         }
 
         // POST login
@@ -48,7 +48,7 @@ namespace Air_bnb.Controllers
             }
             catch (KeyNotFoundException e)
             {
-                return NotFound("user is not found.");
+                return NotFound("The email address or password is incorrect. Please retry");
             }
 
         }
@@ -59,10 +59,21 @@ namespace Air_bnb.Controllers
         {
             return user.UpdateUser();
         }
+
         [HttpPut("{email}")]
-        public User Put(string email, [FromBody] User user)
+        [ProducesResponseType(StatusCodes.Status501NotImplemented)]
+        public IActionResult Put(string email, [FromBody] User user)
         {
-            return user.UpdateUser(email);
+            try
+            {
+                 return Ok(user.UpdateUser(email));
+
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(StatusCodes.Status501NotImplemented, "Unable to update");
+            }
         }
 
         // DELETE api/<UsersController>/5

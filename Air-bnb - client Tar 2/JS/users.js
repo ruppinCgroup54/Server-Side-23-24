@@ -1,10 +1,4 @@
 $(document).ready(function () {
-  server =
-    location.hostname === "localhost" || location.hostname === "127.0.0.1"
-      ? `https://localhost:7014/`
-      : `https://proj.ruppin.ac.il/cgroup54/test2/tar1/`;
-  // server = "https://localhost:7014/";
-
   isUpdate = window.location.search.slice(1) === "update";
 
   $("#userForm").submit(addNewUser);
@@ -17,7 +11,7 @@ $(document).ready(function () {
 });
 
 function updateRegOrEdit() {
-  let currentUser = JSON.parse(sessionStorage.getItem("connectUser"));
+  currentUser = JSON.parse(sessionStorage.getItem("connectUser"));
 
   document.querySelector(".jumbotron .display-4 b").innerHTML =
     "Edit user details";
@@ -25,6 +19,8 @@ function updateRegOrEdit() {
   document.querySelector("button[type='submit']").innerHTML = "Update user";
 
   let form = $("#userForm")[0];
+
+  form.email.setAttribute('disabled',true);
 
   form.firstName.value = currentUser.firstName;
   form.lastName.value = currentUser.familyName;
@@ -41,12 +37,13 @@ function addNewUser(e) {
     FamilyName: data.lastName.value,
     Email: data.email.value,
     Password: data.password.value,
+    isActive:true
   };
 
   if (isUpdate) {
     ajaxCall(
       "PUT",
-      server + `api/Users/${data.email.value}`,
+      server + `api/Users/${currentUser.email}`,
       JSON.stringify(newUser),
       sUpdateCB,
       eUpdateCB

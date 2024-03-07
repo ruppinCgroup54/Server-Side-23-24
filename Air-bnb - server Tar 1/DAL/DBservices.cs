@@ -37,8 +37,9 @@ public class DBservices
         con.Open();
         return con;
     }
-    
-    //----------------------------------//
+
+    /*----------------------------USERS----------------------------*/
+
     //insert new user
     public int Insert(User newUser)
     {
@@ -77,7 +78,7 @@ public class DBservices
             // write to log
             throw (ex);
         }
-        
+
 
         finally
         {
@@ -85,15 +86,15 @@ public class DBservices
             {
                 // close the db connection
                 con.Close();
-                
+
             }
-            
+
         }
         return 0;
     }
 
     // Create the SqlCommand for insert user
-    private SqlCommand CreateUserInsertCommandWithSP(String spInsertUser, SqlConnection con, User newUser )
+    private SqlCommand CreateUserInsertCommandWithSP(String spInsertUser, SqlConnection con, User newUser)
     {
 
         SqlCommand cmd = new SqlCommand(); // create the command object
@@ -114,6 +115,7 @@ public class DBservices
         return cmd;
     }
 
+    /*--------------------------------------------*/
     //update user
     public User UpdateUser(User updateUser)
     {
@@ -194,8 +196,7 @@ public class DBservices
         return cmd;
     }
 
-
-    //----------------------------------//
+    /*--------------------------------------------*/
     //get all users
     public List<User> ReadUsers()
     {
@@ -273,7 +274,7 @@ public class DBservices
     }
 
 
-    //----------------------------------//
+    /*--------------------------------------------*/
     //login user
     public User Login(User loginUser)
     {
@@ -301,8 +302,8 @@ public class DBservices
         {
             SqlDataReader dataReader = cmd.ExecuteReader(); // execute the command
 
-            while (dataReader.Read()) 
-            { 
+            while (dataReader.Read())
+            {
                 u.FirstName = dataReader["firstName"].ToString();
                 u.FamilyName = dataReader["familyName"].ToString();
                 u.Email = dataReader["email"].ToString();
@@ -349,7 +350,10 @@ public class DBservices
         return cmd;
     }
 
-    //----------------------------------//
+
+    /*----------------------------FLATS----------------------------*/
+
+    /*--------------------------------------------*/
     //insert new flat
     public bool Insert(Flat newFlat)
     {
@@ -374,7 +378,7 @@ public class DBservices
         try
         {
             int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected==1 ? true : false;
+            return numEffected == 1 ? true : false;
         }
         catch (Exception ex)
         {
@@ -415,7 +419,7 @@ public class DBservices
         return cmd;
     }
 
-    //----------------------------------//
+    /*--------------------------------------------*/
     //find all the flats in a city with max price
     public List<Flat> GetMaxPriceInCity(string city, float price)
     {
@@ -495,7 +499,7 @@ public class DBservices
         return cmd;
     }
 
-    //----------------------------------//
+    /*--------------------------------------------*/
     //find flat by id
     public Flat ReadFlatById(int id)
     {
@@ -570,8 +574,8 @@ public class DBservices
 
         return cmd;
     }
-
-    //----------------------------------//
+   
+    /*--------------------------------------------*/
     //get all flats
     public List<Flat> ReadFlats()
     {
@@ -648,7 +652,8 @@ public class DBservices
         return cmd;
     }
 
-    //----------------------------------//
+    /*----------------------------VACATIONS----------------------------*/
+
     //get all vacations
     public List<Vacation> ReadVacations()
     {
@@ -679,7 +684,7 @@ public class DBservices
             while (dataReader.Read())
             {
                 Vacation v = new();
-                v.FlatId = dataReader["flatId"].ToString();
+                v.FlatId = Convert.ToInt32(dataReader["flatId"]);
                 v.UserEmail = dataReader["userEmail"].ToString();
                 v.StartDate = Convert.ToDateTime(dataReader["startDate"]);
                 v.EndDate = Convert.ToDateTime(dataReader["endDate"]);
@@ -725,10 +730,9 @@ public class DBservices
         return cmd;
     }
 
-
-    //----------------------------------//
+    /*--------------------------------------------*/
     //get vacation by id
-    public Vacation ReadVacationById(string id)
+    public List<Vacation> ReadVacationById(string id)
     {
 
         SqlConnection con;
@@ -752,18 +756,21 @@ public class DBservices
         {
             SqlDataReader dataReader = cmd.ExecuteReader();
 
-            Vacation v = new();
+            List<Vacation>  vacList = new();
 
             while (dataReader.Read())
             {
-                v.FlatId = dataReader["flatId"].ToString();
+                Vacation v = new();
+                v.FlatId = Convert.ToInt32(dataReader["flatId"]);
                 v.UserEmail = dataReader["userEmail"].ToString();
                 v.StartDate = Convert.ToDateTime(dataReader["startDate"]);
                 v.EndDate = Convert.ToDateTime(dataReader["endDate"]);
                 v.Id = Convert.ToInt32(dataReader["id"]);
+
+                vacList.Add(v);
             }
 
-            return v;
+            return vacList;
 
         }
         catch (Exception ex)
@@ -797,12 +804,12 @@ public class DBservices
 
         cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
 
-        cmd.Parameters.AddWithValue("@id", id);
+        cmd.Parameters.AddWithValue("@userEmail", id);
 
         return cmd;
     }
 
-    //----------------------------------//
+    /*--------------------------------------------*/
     //get vacation by dates
     public List<Vacation> ReadVacationByIdDates(DateTime startDate, DateTime endDate)
     {
@@ -833,7 +840,7 @@ public class DBservices
             while (dataReader.Read())
             {
                 Vacation v = new();
-                v.FlatId = dataReader["flatId"].ToString();
+                v.FlatId = Convert.ToInt32(dataReader["flatId"]);
                 v.UserEmail = dataReader["userEmail"].ToString();
                 v.StartDate = Convert.ToDateTime(dataReader["startDate"]);
                 v.EndDate = Convert.ToDateTime(dataReader["endDate"]);
@@ -880,7 +887,7 @@ public class DBservices
         return cmd;
     }
 
-    //----------------------------------//
+    /*--------------------------------------------*/
     //insert vacation
     public int InsertVacation(Vacation newVacation)
     {
@@ -904,8 +911,8 @@ public class DBservices
 
         try
         {
-            int numEffected = cmd.ExecuteNonQuery();
-            return numEffected;
+            object numEffected = cmd.ExecuteScalar();
+            return Convert.ToInt32(numEffected);
 
         }
         catch (Exception ex)
@@ -946,7 +953,7 @@ public class DBservices
         return cmd;
     }
 
-    //----------------------------------//
+    /*--------------------------------------------*/
     //get Average Per Night
     public List<Object> getAveragePerNight(int month)
     {
@@ -978,8 +985,8 @@ public class DBservices
             {
                 Object o = new
                 {
-                    city=dataReader["city"].ToString(),
-                    AveragePerNight= Convert.ToInt32(dataReader["AveragePerNight"])
+                    city = dataReader["city"].ToString(),
+                    AveragePerNight = Convert.ToInt32(dataReader["AveragePerNight"])
                 };
 
                 objectsList.Add(o);

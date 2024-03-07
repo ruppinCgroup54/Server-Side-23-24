@@ -1,7 +1,4 @@
 $(document).ready(function () {
-  // server = `https://proj.ruppin.ac.il/cgroup54/test2/tar1/`;
-  server = (location.hostname === "localhost" || location.hostname === "127.0.0.1"? `https://localhost:7014/` : `https://proj.ruppin.ac.il/cgroup54/test2/tar1/`);
-
   getFlatIdFromQueryString();
 
   $(`#vacation-form`).submit(submitNewVacation);
@@ -14,6 +11,9 @@ $(document).ready(function () {
 
   $("#userName").text("Hi " + connectedUser.firstName);
   $("#userId").val(connectedUser.email);
+
+  $(window).on("resize", getVacations);
+
 });
 
 function getFlatIdFromQueryString() {
@@ -28,10 +28,9 @@ function submitNewVacation(e) {
   let myForm = e.target;
 
   let newVac = {
-    id:
-      Math.random().toString(36).slice(2, 12) + new Date().getTime().toString(),
-    userId: myForm.userId.value,
-    flatId: myForm.flatId.value,
+    id: 0,
+    userEmail: myForm.userId.value,
+    flatId: parseInt(myForm.flatId.value),
     startDate: myForm.inpStartDate.value,
     endDate: myForm.inpEndDate.value,
   };
@@ -43,18 +42,21 @@ function submitNewVacation(e) {
     sInsertVacationsCB,
     eInsertVacationsCB
   );
+  myForm.inpStartDate.value="";
+  myForm.inpEndDate.value="";
 
-  console.log("newVac", newVac);
+  // console.log("newVac", newVac);
   return false;
 }
 
 function sInsertVacationsCB(data) {
   console.log("data", data);
   swal("Vacation has been Added!", "Great Job", "success");
+
 }
 
 function eInsertVacationsCB(error) {
-  alert("error", error);
+  swal("error!", error.responseText,'error');
 }
 
 function checkDate() {
@@ -101,7 +103,7 @@ async function sVacationsCB(data) {
     .then((fdata) => fdata);
 
   let strVacations = data.map((vac, i) => {
-    let flatVac = flats.find((flat) => (flat.id = vac.flatId));
+    let flatVac = flats.find((flat) => (flat.id == vac.flatId));
 
     return createVacation(vac, flatVac, i);
   });
@@ -151,7 +153,7 @@ function createVacation(vac, flat, i) {
             <div class="card-body">
               <div class="card-text">
                 <p>Flat: ${vac.flatId}</p>
-                <p>Price: ${price} $</p>
+                <p>Price: ${Math.floor(price)} $</p>
                 <p>Dates: ${startDate.toLocaleDateString(
                   "en-UK"
                 )} - ${endDate.toLocaleDateString("en-UK")}</p>

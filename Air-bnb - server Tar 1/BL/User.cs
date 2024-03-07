@@ -4,7 +4,7 @@
     {
         string firstName, familyName, email, password;
         bool isActive;
-        public User(string firstName, string familyName, string email, string password, bool isActive)
+        public User(string firstName, string familyName, string email, string password, bool isActive=true)
         {
             this.FirstName = firstName;
             this.FamilyName = familyName;

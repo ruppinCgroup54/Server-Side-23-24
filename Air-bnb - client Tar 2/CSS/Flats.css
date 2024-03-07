@@ -15,7 +15,7 @@ body {
 }
 
 #upper-section {
-  margin: 15vh auto;
+  margin: 20vh auto;
 }
 
 .form-row {
@@ -45,7 +45,7 @@ body {
 .btn-primary:not(:disabled):not(.disabled):active:focus {
   box-shadow: 0 0 0 0.2rem var(--main-color);
 }
-.hide{
+.hide {
   opacity: 0;
   transition: all 0.5s ease-in-out;
 }
@@ -135,8 +135,18 @@ body {
 }
 
 /* ------ admin page ------- */
-  #usersTable_wrapper {
-    flex-direction: column;
-  }
+#usersTable_wrapper {
+  flex-direction: column;
+}
 
+html {
+  font-size: unset;
+}
 
+label {
+  gap: 5px;
+}
+
+.col-sm-6 {
+  align-self: center;
+}

@@ -28,16 +28,6 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 
-    <!-- import BOOTSTRAP -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
-        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
-        crossorigin="anonymous"></script>
-
-    <!-- import CSS -->
-    <link rel="stylesheet" href="../CSS/Flats.css">
-
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
@@ -48,194 +38,42 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+
+
+    <!-- import BOOTSTRAP -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+        crossorigin="anonymous"></script>
+
+    <!-- import CSS -->
+    <link rel="stylesheet" href="../CSS/Flats.css">
+
     <script src="../JS/ajaxCalls.js"></script>
+    <script src="../JS/utils.js"></script>
+    <script src="../JS/users.js"></script>
+    <script src="../JS/admin.js"></script>
 
 
-    <script>
-
-        months = ["January", "February", "March", "April", "May", "June", "July",
-            "August", "September", "October", "November", "December"];
-
-        // will run when the document is ready
-        $(document).ready(function () {
-
-            server = "https://localhost:7014/";
-            // once the document is ready we fetch a list of cars from the server
-            ajaxCall("GET", server + "api/users", "", getSuccess, error);
-
-            $("#dataTable").hide();
-            $("#manageBtn").click(showDataTable);
-
-            renderMonthsOptions();
-            $('#dtlMonths').change(checkFromList);
-
-            $('#formReport').submit(generateReport);
-        });
-
-        function renderMonthsOptions() {
-            let monthStr = months.map((m, i) => `<option value=${i + 1}>${m}</option>`)
-
-            $('#months').append(monthStr);
-        }
-
-        function generateReport(e) {
-            let month = parseInt(e.target.dtlMonths.value);
-
-            
-
-            ajaxCall("GET", server + `api/Vacations/report/${month}`, "", sReportCB, error);
-return false;
-        }
-
-        function sReportCB(data) {
-
-            console.log('data', data)
-            let dataStr = data.map((row) => {
-                return ` 
-                    <tr >
-                        <th scope="row">${row.city}</td>
-                        <td>${row.averagePerNight}</td>
-                    </tr>`
-            });
-
-            $('#reportBody').html(dataStr);
-
-            $('#reportDiv').removeClass('hide')
-
-        }
-
-        function checkFromList(e) {
-
-            let month = e.target
-            if (!months.find((m, i) => i + 1 == month.value)) {
-                month.validity.valid = false;
-                month.setCustomValidity('Pick a valid monthe');
-            } else {
-                month.validity.valid = true;
-                month.setCustomValidity("");
-            }
-
-        }
-
-        function showDataTable() {
-            $("#dataTable").show();
-            $("#manageBtn").removeClass("d-block")
-            $("#manageBtn").addClass("d-none")
-        }
-
-        // wire all the buttons to their functions
-        function buttonEvents() {
-            $(document).on("click", ".editBtn", function () {
-                markSelected(this);
-                let email = this.getAttribute('data-UserEmail');
-                $(`[data-userActive="check${email}"]`).prop("disabled", false);
-                $(`[data-userEmail="${email}"]`).toggle();
-            });
-
-            $(document).on("click", ".saveBtn", function () {
-                markSelected(this);
-                let email = this.getAttribute('data-UserEmail');
-                $(`[data-userActive="check${email}"]`).prop("disabled", true);
-                user = users.find(u => u.email == email);
-                onSubmitFunc(user);
-                $(`[data-userEmail="${email}"]`).toggle();
-            });
-
-        }
-
-        // mark the selected row
-        function markSelected(btn) {
-            $("#usersTable tr").removeClass("selected"); // remove seleced class from rows that were selected before
-            row = (btn.parentNode).parentNode; // button is in TD which is in Row
-            row.className = 'selected'; // mark as selected
-        }
 
 
-        function onSubmitFunc(user) {
-            user.isActive = $(`[data-userActive="check${user.email}"]`).is(":checked");
 
-            // update a new Car record to the server
-            ajaxCall("PUT", server + "api/users", JSON.stringify(user), updateSuccess, error);
-            return false;
-        }
-
-
-        // success callback function after update
-        function updateSuccess(usersdata) {
-            tbl.clear();
-            users = usersdata;
-            redrawTable(tbl, usersdata);
-            buttonEvents();
-            swal("Updated Successfuly!", "Great Job", "success");
-        }
-
-        // success callback function after delete
-        function deleteSuccess(usersdata) {
-            tbl.clear();
-            redrawTable(tbl, usersdata);
-            buttonEvents(); // after redrawing the table, we must wire the new buttons
-            swal("Deleted Successfuly!", "Great Job", "success");
-        }
-
-        // redraw a datatable with new data
-        function redrawTable(tbl, data) {
-            tbl.clear();
-            for (var i = 0; i < data.length; i++) {
-                tbl.row.add(data[i]);
-            }
-            tbl.draw();
-        }
-
-        // this function is activated in case of a success
-        function getSuccess(usersdata) {
-            users = usersdata; // keep the cars array in a global variable;
-            try {
-                tbl = $('#usersTable').DataTable({
-                    data: usersdata,
-                    pageLength: 5,
-                    columns: [
-                        { data: "firstName" },
-                        { data: "familyName" },
-                        { data: "email" },
-                        {
-                            data: "isActive",
-                            render: function (data, type, row, meta) {
-                                if (data == true)
-                                    return `<input data-userActive="check${row.email}" type="checkbox" checked disabled="disabled" />`;
-                                else
-                                    return `<input data-userActive="check${row.email}" type="checkbox" disabled="disabled"/>`;
-                            }
-                        },
-                        {
-                            render: function (data, type, row, meta) {
-                                let dataUser = "data-UserEmail='" + row.email + "'";
-
-                                editBtn = "<button type='button' class = 'editBtn btn btn-success' " + dataUser + "> Edit </button>";
-                                saveBtn = "<button style='display: none'  type='button' class = 'saveBtn btn btn-warning' " + dataUser + "> Save </button>";
-                                return editBtn + saveBtn;
-                            }
-                        }
-                    ],
-                });
-                buttonEvents();
-            }
-
-            catch (err) {
-                alert(err);
-            }
-        }
-
-        // this function is activated in case of a failure
-        function error(err) {
-            console.log('err', err)
-            swal("Error " , err.responseText,'error');
-        }
-
-    </script>
 
 </head>
 
 <body>
+
+    <div id="buttons-div" class="container open-modal">
+
+
+        <div class="btn-group-vertical " role="group" aria-label="Basic example">
+            <button id="log-out" class="btn btn-primary">Log-out</button>
+        </div>
+
+    </div>
+
+
     <section id="usersData">
 
         <button id="manageBtn" class="btn btn-primary d-block mx-auto my-5">Manage users</button>
@@ -269,22 +107,26 @@ return false;
         </div>
     </section>
 
-
+    <br>
+    <hr>
+    <br>
     <section id="report">
 
-        <div id="selectMonth">
+        <div id="selectMonth" class="">
             <form id="formReport" class="d-flex flex-wrap justify-content-center align-items-center">
 
-                <input list="months" id="dtlMonths" class="m-3" required min=1 max=12 />
+                <input list="months" id="dtlMonths" class="m-3" required min=1 max=12 placeholder="Pick a month" />
                 <datalist id="months">
                     <!-- import months -->
                 </datalist>
 
-                <button class="btn btn-primary">Generate reaport <i class="bi bi-file-ruled-fill"></i></button>
+                <button class="btn btn-primary ">Generate reaport <i class="bi bi-file-ruled-fill"></i></button>
 
 
             </form>
         </div>
+
+
 
         <div id="reportDiv" class="table-responsive w-75 m-auto hide">
             <table class="table table-sm text-center table-hover table-bordered ">
